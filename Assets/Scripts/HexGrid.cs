@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour {
     public HexCell hexCell;
     public int width = 6;
     public int height = 6;
+
+    public float minZoom = 1f;
+    public float maxZoom = 15f;
+    public float zoomSensitivity = 2f;
+    public float xSensitivity = 0.2f;
+    public float ySensitivity = 0.2f;
 
     void Awake()
     {
@@ -30,9 +34,28 @@ public class HexGrid : MonoBehaviour {
 
     void Update()
     {
-        //zoom
         var camera = Camera.main;
-        var zoom = Input.GetAxis("Mouse ScrollWheel") * -2f;
-        camera.orthographicSize = Mathf.Clamp(camera.orthographicSize + zoom, 1f, 100f);
+        //zoom
+        var zoom = Input.GetAxis("Mouse ScrollWheel") * -zoomSensitivity;
+        camera.orthographicSize = Mathf.Clamp(camera.orthographicSize + zoom, minZoom, maxZoom);
+        //moving
+        var m = Input.mousePosition;
+        var t = camera.transform.localPosition;
+        if (m.x >= Screen.width)
+        {
+            t.x += xSensitivity;
+        } else if (m.x <= 0)
+        {
+            t.x -= xSensitivity;
+        }
+        if (m.y >= Screen.height)
+        {
+            t.y += ySensitivity;
+        }
+        else if (m.y <= 0)
+        {
+            t.y -= ySensitivity;
+        }
+        camera.transform.localPosition = t;
     }
 }
