@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 	public string Name = "Undefined";
-	public List<Sprite> Emblem = new List<Sprite>();
-
-	// Use this for initialization
+    // Lets start with a single sprite because it's easier to save.
+	public Sprite Emblem = null;
+    
 	void Start () {
 		
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		
 	}
