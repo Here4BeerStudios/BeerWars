@@ -27,4 +27,12 @@ public class HexGrid : MonoBehaviour {
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
     }
+
+    void Update()
+    {
+        //zoom
+        var camera = Camera.main;
+        var zoom = Input.GetAxis("Mouse ScrollWheel") * -2f;
+        camera.orthographicSize = Mathf.Clamp(camera.orthographicSize + zoom, 1f, 100f);
+    }
 }
