@@ -2,6 +2,7 @@
 
 public class HexGrid : MonoBehaviour {
     public HexCell hexCell;
+
     public int width = 6;
     public int height = 6;
 
@@ -11,8 +12,18 @@ public class HexGrid : MonoBehaviour {
     public float xSensitivity = 0.2f;
     public float ySensitivity = 0.2f;
 
+    private HexCell[] _grounds;
+
     void Awake()
     {
+        //_grounds = new []
+        //{
+        //    groundDefault,
+        //    groundCornfield,
+        //    groundHill,
+        //    groundWater
+        //};
+
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)

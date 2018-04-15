@@ -1,4 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Random = System.Random;
+
+public enum Ground
+{
+    Default,
+    Cornfield,
+    Water,
+    Hill
+}
+
+public enum Building
+{
+    Brewery,
+    Bar,
+    Cornsilo
+}
 
 public class HexCell : MonoBehaviour {
     public const float outerRadius = 1;
@@ -13,7 +30,10 @@ public class HexCell : MonoBehaviour {
         new Vector3(0f, 0f, outerRadius)
     };
 
-
+    void Awake()
+    {
+        
+    } 
 
     // Use this for initialization
     void Start () {
