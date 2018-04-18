@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MenuScript : MonoBehaviour {
 
@@ -10,8 +12,11 @@ public class MenuScript : MonoBehaviour {
 	public GameObject storyMenu;
 	public GameObject onlineMenu;
 
+	public InputField text;
+	public SpriteChooser chooser;
+
 	public MenuState current;
-	// Update is called once per frame
+
 	void Awake () {
 		current = MenuState.MainMenu;
 	}
@@ -51,6 +56,8 @@ public class MenuScript : MonoBehaviour {
 
 	public void OnOptionsMenu() {
 		current = MenuState.OptionsMenu;
+
+		LoadPlayerToOptions ();
 	}
 
 	public void OnStoryMenu() {
@@ -61,11 +68,25 @@ public class MenuScript : MonoBehaviour {
 		current = MenuState.OnlineMenu;
 	}
 
+	public void SaveToPlayer() {
+		if(text.text.Length > 0)
+			LocalPlayerInfo.self.Name = text.text;
+		LocalPlayerInfo.self.Emblem = chooser.selected;
+
+		LocalPlayerInfo.self.Save ();
+	}
+
+	public void LoadPlayerToOptions() {
+		text.text = LocalPlayerInfo.self.Name;
+		chooser.SelectSprite(LocalPlayerInfo.self.Emblem);
+
+	}
+
 	public void OnQuit() {
 		Application.Quit ();
 	}
 
 	public void OnStoryLevel(int levelId) {
-
+		SceneManager.LoadScene ("Scene");
 	}
 }

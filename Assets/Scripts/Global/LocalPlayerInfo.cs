@@ -5,9 +5,9 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 
-public class ThisPlayer : Player {
-    // Access via ThisPlayer.self.XXX
-    public static ThisPlayer self;
+public class LocalPlayerInfo : PlayerInfo {
+    // Access via LocalPlayerInfo.self.XXX
+    public static LocalPlayerInfo self;
     
 	void Awake () {
         // We check if we have a player.
@@ -30,7 +30,10 @@ public class ThisPlayer : Player {
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
         // TODO Check if Sprite.name is correct variable to save.
-        PlayerData data = new PlayerData { name = self.Name, sprite = self.Emblem.name };
+		String emblem = null;
+		if (self.Emblem != null)
+			emblem = self.Emblem.name;
+		PlayerData data = new PlayerData { name = self.Name, sprite = emblem };
 
         bf.Serialize(file, data);
         file.Close();
@@ -47,7 +50,7 @@ public class ThisPlayer : Player {
             file.Close();
 
             self.Name = pd.name;
-            self.Emblem = Resources.Load(pd.sprite, typeof(Sprite)) as Sprite;
+			self.Emblem = Resources.Load("Sprites/Emblems/" + pd.sprite, typeof(Sprite)) as Sprite;
         }
     }
 }
