@@ -1,6 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class HexGrid : MonoBehaviour {
+    public CellContentFactory Factory;
     public HexCell hexCell;
 
     public int width = 6;
@@ -12,17 +14,11 @@ public class HexGrid : MonoBehaviour {
     public float xSensitivity = 0.2f;
     public float ySensitivity = 0.2f;
 
-    private HexCell[] _grounds;
+    private Dictionary<string, CellContent> contents;
 
     void Awake()
     {
-        //_grounds = new []
-        //{
-        //    groundDefault,
-        //    groundCornfield,
-        //    groundHill,
-        //    groundWater
-        //};
+        contents = new Dictionary<string, CellContent> {{"Water", Factory.CreateWater()}};
 
         for (int y = 0, i = 0; y < height; y++)
         {
@@ -41,6 +37,8 @@ public class HexGrid : MonoBehaviour {
         var cell = Instantiate<HexCell>(hexCell);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
+
+        cell.Content = contents["Water"];
     }
 
     void Update()
