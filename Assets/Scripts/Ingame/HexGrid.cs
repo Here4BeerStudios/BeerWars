@@ -2,7 +2,6 @@
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour {
-    public CellContentFactory Factory;
     public HexCell hexCell;
 
     public int width = 6;
@@ -18,8 +17,7 @@ public class HexGrid : MonoBehaviour {
 
     void Awake()
     {
-        contents = new Dictionary<string, CellContent> {{"Water", Factory.CreateWater()}};
-
+        contents = LoadCellContents();
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -27,6 +25,14 @@ public class HexGrid : MonoBehaviour {
                 CreateCell(x, y, i++);
             }
         }
+    }
+
+    private Dictionary<string, CellContent> LoadCellContents()
+    {
+        var contents = new Dictionary<string, CellContent>(8);
+        contents.Add("Water",  new CellContent(Resources.Load<Sprite>(@"Sprites/Cells/Water")));
+
+        return contents;
     }
 
     private void CreateCell(int x, int y, int i)
