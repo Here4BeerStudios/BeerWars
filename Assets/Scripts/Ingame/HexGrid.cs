@@ -18,7 +18,8 @@ public class HexGrid : MonoBehaviour {
 
     void Awake()
     {
-        contents = LoadCellContents();
+        contents = new Dictionary<string, CellContent>(8);
+        LoadCellContents(contents);
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -28,13 +29,13 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    private Dictionary<string, CellContent> LoadCellContents()
+    private void LoadCellContents(Dictionary<string, CellContent> contents)
     {
-        var contents = new Dictionary<string, CellContent>(8);
-        var water = Resources.Load<Sprite>(@"Sprites/Cells/Water");
-        contents.Add("Water",  new CellContent(water));
-
-        return contents;
+        var sprites = Resources.LoadAll<Sprite>(@"Sprites/Cell/Content");
+        foreach (var sprite in sprites)
+        {
+            contents.Add(sprite.name, new CellContent(sprite));
+        }
     }
 
     private void CreateCell(int x, int y, int i)
