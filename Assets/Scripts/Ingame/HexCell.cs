@@ -18,29 +18,23 @@ public class HexCell : MonoBehaviour
         new Vector3(0f, 0f, outerRadius)
     };
 
-    private CellContent _content;
+    private SpriteRenderer _renderer;
 
+    private CellContent _content;
     public CellContent Content
     {
         get { return _content; }
         set
         {
             _content = value;
-            gameObject.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = value.Sprite;
+            _renderer.sprite = value.Sprite;
         }
     }
 
+    // Use this for initialization
     void Awake()
     {
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        var child = gameObject.transform.GetChild(0);
+        _renderer = child.GetComponent<SpriteRenderer>();
     }
 }

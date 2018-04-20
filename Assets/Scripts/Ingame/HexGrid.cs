@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour {
@@ -30,7 +31,8 @@ public class HexGrid : MonoBehaviour {
     private Dictionary<string, CellContent> LoadCellContents()
     {
         var contents = new Dictionary<string, CellContent>(8);
-        contents.Add("Water",  new CellContent(Resources.Load<Sprite>(@"Sprites/Cells/Water")));
+        var water = Resources.Load<Sprite>(@"Sprites/Cells/Water");
+        contents.Add("Water",  new CellContent(water));
 
         return contents;
     }
@@ -46,6 +48,8 @@ public class HexGrid : MonoBehaviour {
 
         cell.Content = contents["Water"];
     }
+
+    private 
 
     void Update()
     {
