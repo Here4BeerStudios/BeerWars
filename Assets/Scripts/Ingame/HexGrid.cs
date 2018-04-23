@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class HexGrid : MonoBehaviour {
@@ -14,12 +13,12 @@ public class HexGrid : MonoBehaviour {
     public float xSensitivity = 0.2f;
     public float ySensitivity = 0.2f;
 
-    private Dictionary<string, CellContent> contents;
+    private Dictionary<Content, CellContent> contents;
 
     void Awake()
     {
-        contents = new Dictionary<string, CellContent>(8);
-        LoadCellContents(contents);
+        contents = new Dictionary<Content, CellContent>(8);
+        LoadCellContents();
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -29,13 +28,26 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    private void LoadCellContents(Dictionary<string, CellContent> contents)
+    private void LoadCellContents()
     {
         var sprites = Resources.LoadAll<Sprite>(@"Sprites/Cell/Content");
+        var spritesDic = new Dictionary<string, Sprite>(sprites.Length);
         foreach (var sprite in sprites)
         {
-            contents.Add(sprite.name, new CellContent(sprite));
+            spritesDic.Add(sprite.name, sprite);
         }
+        //AddContent(Content.Normal, null);
+        //AddContent(Content.Cornfield, spritesDic["Cornfield"]);
+        AddContent(Content.Water, spritesDic["Water"]);
+        //AddContent(Content.Forest, spritesDic["Forest"]);
+        //AddContent(Content.Hill, spritesDic["Hill"]);
+        //AddContent(Content.Brewery, spritesDic["Brewery"]);
+        //AddContent(Content.Village, spritesDic["Village"]);
+    }
+
+    private void AddContent(Content content, Sprite sprite)
+    {
+        contents.Add(content, new CellContent(content, sprite));
     }
 
     private void CreateCell(int x, int y, int i)
@@ -47,10 +59,10 @@ public class HexGrid : MonoBehaviour {
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
-        cell.Content = contents["Water"];
+        cell.X = x;
+        cell.Y = y;
+        cell.Content = contents[Content.Water];
     }
-
-    private 
 
     void Update()
     {
@@ -77,5 +89,16 @@ public class HexGrid : MonoBehaviour {
             t.y -= ySensitivity;
         }
         camera.transform.localPosition = t;
+        // click
+        if (Input.GetMouseButtonDown(0))
+        {
+            // use Raycast for click detection behind content sprite
+            var hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (hit.transform != null)
+            {
+                var cell = hit.transform.gameObject.GetComponent<HexCell>();
+                Debug.Log(cell.ToString());
+            }
+        }
     }
 }

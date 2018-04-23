@@ -1,13 +1,24 @@
 ﻿using UnityEngine;
 
+public enum Content
+{
+    Normal,
+    Cornfield,
+    Water,
+    Forest,
+    Hill,
+    Brewery,
+    Village
+}
+
 public struct CellContent
 {
+    public readonly Content Content;
     public readonly Sprite Sprite;
-    public readonly CellContent[] Modifikations;
 
-    public CellContent(Sprite sprite, CellContent[] modifikations = null)
+    public CellContent(Content content, Sprite sprite)
     {
+        Content = content;
         Sprite = sprite;
-        Modifikations = modifikations ?? new CellContent[0];
     }
 }

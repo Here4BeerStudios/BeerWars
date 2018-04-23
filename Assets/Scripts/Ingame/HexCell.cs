@@ -18,6 +18,8 @@ public class HexCell : MonoBehaviour
         new Vector3(0f, 0f, outerRadius)
     };
 
+    public int X, Y;
+
     private SpriteRenderer _renderer;
 
     private CellContent _content;
@@ -31,10 +33,14 @@ public class HexCell : MonoBehaviour
         }
     }
 
-    // Use this for initialization
     void Awake()
     {
         var child = gameObject.transform.GetChild(0);
         _renderer = child.GetComponent<SpriteRenderer>();
+    }
+
+    public override string ToString()
+    {
+        return "Cell (" + X + ", " + Y + ") clicked";
     }
 }
