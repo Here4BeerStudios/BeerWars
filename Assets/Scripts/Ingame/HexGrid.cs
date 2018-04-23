@@ -61,7 +61,7 @@ public class HexGrid : MonoBehaviour {
 
         cell.X = x;
         cell.Y = y;
-        cell.Content = contents[Content.Water];
+        cell.CellContent = contents[Content.Water];
     }
 
     void Update()

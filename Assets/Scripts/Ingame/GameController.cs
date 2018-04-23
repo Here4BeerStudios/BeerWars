@@ -2,8 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public struct Action
+{
+    public readonly Player player;
+    public readonly HexCell Cell;
+}
+
 public class GameController : MonoBehaviour {
-	public Player[] players;
+	public List<Player> _players;
+    public Queue<Action> _queue; //TODO Threadsafe?
+
+    void Awake()
+    {
+        _players = new List<Player>();
+        _queue = new Queue<Action>();
+    }
+
+    public void AddPlayer(Player player)
+    {
+        _players.Add(player);
+    }
+
+    public void RegisterAction(Action action)
+    {
+        _queue.Enqueue(action);
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -24,4 +47,24 @@ public class GameController : MonoBehaviour {
 
 		// For online mode relevant: Just have 1 gamecontroller | Exists on server.
 	}
+
+    private void HandleAction(Action action)
+    {
+        //todo correct handling
+        switch (action.Cell.CellContent.Content)
+        {
+            case Content.Normal:
+                {
+                    break;
+                }
+            case Content.Cornfield:
+                {
+                    break;
+                }
+            case Content.Forest:
+                {
+                    break;
+                }
+        }
+    }
 }

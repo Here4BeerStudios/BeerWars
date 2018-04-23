@@ -22,13 +22,13 @@ public class HexCell : MonoBehaviour
 
     private SpriteRenderer _renderer;
 
-    private CellContent _content;
-    public CellContent Content
+    private CellContent _cellContent;
+    public CellContent CellContent
     {
-        get { return _content; }
+        get { return _cellContent; }
         set
         {
-            _content = value;
+            _cellContent = value;
             _renderer.sprite = value.Sprite;
         }
     }
