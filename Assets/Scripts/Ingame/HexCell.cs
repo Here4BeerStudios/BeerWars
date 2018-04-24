@@ -41,6 +41,6 @@ public class HexCell : MonoBehaviour
 
     public override string ToString()
     {
-        return "Cell (" + X + ", " + Y + ") clicked";
+        return "Cell (" + X + ", " + Y + "), Content " + CellContent.Content;
     }
 }

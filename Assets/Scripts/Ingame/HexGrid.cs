@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+using Random = System.Random;
+
 public class HexGrid : MonoBehaviour {
     public HexCell hexCell;
 
@@ -13,17 +15,19 @@ public class HexGrid : MonoBehaviour {
     public float xSensitivity = 0.2f;
     public float ySensitivity = 0.2f;
 
+    private Random rnd = new Random();
     private Dictionary<Content, CellContent> contents;
 
     void Awake()
     {
         contents = new Dictionary<Content, CellContent>(8);
         LoadCellContents();
+        var entries = new List<CellContent>(contents.Values);
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                CreateCell(x, y, i++);
+                CreateCell(x, y, i++, entries[rnd.Next(entries.Count)]);
             }
         }
     }
@@ -36,12 +40,12 @@ public class HexGrid : MonoBehaviour {
         {
             spritesDic.Add(sprite.name, sprite);
         }
-        //AddContent(Content.Normal, null);
-        //AddContent(Content.Cornfield, spritesDic["Cornfield"]);
-        AddContent(Content.Water, spritesDic["Water"]);
+        AddContent(Content.Normal, null);
+        AddContent(Content.Cornfield, spritesDic["010-field"]);
+        AddContent(Content.Water, spritesDic["004-sea"]);
         //AddContent(Content.Forest, spritesDic["Forest"]);
         //AddContent(Content.Hill, spritesDic["Hill"]);
-        //AddContent(Content.Brewery, spritesDic["Brewery"]);
+        AddContent(Content.Brewery, spritesDic["001-brewery"]);
         //AddContent(Content.Village, spritesDic["Village"]);
     }
 
@@ -50,7 +54,7 @@ public class HexGrid : MonoBehaviour {
         contents.Add(content, new CellContent(content, sprite));
     }
 
-    private void CreateCell(int x, int y, int i)
+    private void CreateCell(int x, int y, int i, CellContent cellContent)
     {
         var position = new Vector3((x + y * 0.5f - y / 2) * (HexCell.innerRadius * 2f),
             y * (HexCell.outerRadius * 1.5f), 0f);
@@ -61,7 +65,7 @@ public class HexGrid : MonoBehaviour {
 
         cell.X = x;
         cell.Y = y;
-        cell.CellContent = contents[Content.Water];
+        cell.CellContent = cellContent;
     }
 
     void Update()
