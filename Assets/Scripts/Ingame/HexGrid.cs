@@ -15,19 +15,21 @@ public class HexGrid : MonoBehaviour {
     public float xSensitivity = 0.2f;
     public float ySensitivity = 0.2f;
 
-    private Random rnd = new Random();
-    private Dictionary<Content, CellContent> contents;
+    private HexCell[,] _cells;
+    private Random _rnd = new Random();
+    private Dictionary<Content, CellContent> _contents;
 
     void Awake()
     {
-        contents = new Dictionary<Content, CellContent>(8);
+        _cells = new HexCell[height, width];
+        _contents = new Dictionary<Content, CellContent>(8);
         LoadCellContents();
-        var entries = new List<CellContent>(contents.Values);
+        var entries = new List<CellContent>(_contents.Values);
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                CreateCell(x, y, i++, entries[rnd.Next(entries.Count)]);
+                CreateCell(x, y, i++, entries[_rnd.Next(entries.Count)]);
             }
         }
     }
@@ -51,7 +53,7 @@ public class HexGrid : MonoBehaviour {
 
     private void AddContent(Content content, Sprite sprite)
     {
-        contents.Add(content, new CellContent(content, sprite));
+        _contents.Add(content, new CellContent(content, sprite));
     }
 
     private void CreateCell(int x, int y, int i, CellContent cellContent)
@@ -66,6 +68,8 @@ public class HexGrid : MonoBehaviour {
         cell.X = x;
         cell.Y = y;
         cell.CellContent = cellContent;
+
+        _cells[y, x] = cell;
     }
 
     void Update()
