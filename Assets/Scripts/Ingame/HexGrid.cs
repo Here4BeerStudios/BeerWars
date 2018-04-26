@@ -4,6 +4,7 @@ using UnityEngine;
 using Random = System.Random;
 
 public class HexGrid : MonoBehaviour {
+    public GameController controller;
     public HexCell hexCell;
 
     public int width = 6;
@@ -105,7 +106,7 @@ public class HexGrid : MonoBehaviour {
             if (hit.transform != null)
             {
                 var cell = hit.transform.gameObject.GetComponent<HexCell>();
-                Debug.Log(cell.ToString());
+                controller.RegisterAction(new Action(null, cell));
             }
         }
     }

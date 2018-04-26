@@ -1,11 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public struct Action
 {
     public readonly Player player;
     public readonly HexCell Cell;
+
+    public Action(Player player, HexCell cell)
+    {
+        this.player = player;
+        Cell = cell;
+    }
 }
 
 public class GameController : MonoBehaviour {
@@ -39,6 +44,10 @@ public class GameController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        while (_queue.Count > 0)
+        {
+            HandleAction(_queue.Dequeue());
+        }
 		// Here do what should be checked every tick.
 		// Don't know what exactly. 
 
@@ -50,19 +59,23 @@ public class GameController : MonoBehaviour {
 
     private void HandleAction(Action action)
     {
+        Debug.Log(action.Cell.ToString());
         //todo correct handling
         switch (action.Cell.CellContent.Content)
         {
             case Content.Normal:
                 {
+
                     break;
                 }
             case Content.Cornfield:
                 {
+
                     break;
                 }
             case Content.Forest:
                 {
+
                     break;
                 }
         }
