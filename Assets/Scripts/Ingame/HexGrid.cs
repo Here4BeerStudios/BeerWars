@@ -4,9 +4,10 @@ using UnityEngine;
 using Random = System.Random;
 
 public class HexGrid : MonoBehaviour {
-    public GameController controller;
-    public BuildingMenu buildingMenu;
-    public HexCell hexCell;
+    public GameController Controller;
+    public BuildingMenu BuildingMenu;
+    public HexCell HexCell;
+    public ContentHandler ContentHandler;
 
     public int width = 6;
     public int height = 6;
@@ -19,14 +20,11 @@ public class HexGrid : MonoBehaviour {
 
     private HexCell[,] _cells;
     private Random _rnd = new Random();
-    private Dictionary<Content, CellContent> _contents;
 
     void Awake()
     {
         _cells = new HexCell[height, width];
-        _contents = new Dictionary<Content, CellContent>(8);
-        LoadCellContents();
-        var entries = new List<CellContent>(_contents.Values);
+        var entries = new List<CellContent>(ContentHandler.Contents.Values);
         for (int y = 0, i = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -36,40 +34,18 @@ public class HexGrid : MonoBehaviour {
         }
     }
 
-    private void LoadCellContents()
-    {
-        var sprites = Resources.LoadAll<Sprite>(@"Sprites/Cell/Content");
-        var spritesDic = new Dictionary<string, Sprite>(sprites.Length);
-        foreach (var sprite in sprites)
-        {
-            spritesDic.Add(sprite.name, sprite);
-        }
-        AddContent(Content.Normal, null);
-        AddContent(Content.Cornfield, spritesDic["010-field"]);
-        AddContent(Content.Water, spritesDic["004-sea"]);
-        //AddContent(Content.Forest, spritesDic["Forest"]);
-        //AddContent(Content.Hill, spritesDic["Hill"]);
-        AddContent(Content.Brewery, spritesDic["001-brewery"]);
-        //AddContent(Content.Village, spritesDic["Village"]);
-    }
-
-    private void AddContent(Content content, Sprite sprite)
-    {
-        _contents.Add(content, new CellContent(content, sprite));
-    }
-
-    private void CreateCell(int x, int y, int i, CellContent cellContent)
+    private void CreateCell(int x, int y, int i, CellContent content)
     {
         var position = new Vector3((x + y * 0.5f - y / 2) * (HexCell.innerRadius * 2f),
             y * (HexCell.outerRadius * 1.5f), 0f);
 
-        var cell = Instantiate<HexCell>(hexCell);
+        var cell = Instantiate<HexCell>(HexCell);
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
         cell.X = x;
         cell.Y = y;
-        cell.CellContent = cellContent;
+        cell.Content = content;
 
         _cells[y, x] = cell;
     }
@@ -107,7 +83,7 @@ public class HexGrid : MonoBehaviour {
             if (hit.transform != null)
             {
                 var obj = hit.transform.gameObject;
-                buildingMenu.Use(obj);
+                BuildingMenu.Use(obj);
                 //controller.RegisterAction(new Action(null, cell));
             }
         }

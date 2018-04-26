@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour {
     {
         Debug.Log(action.Cell.ToString());
         //todo correct handling
-        switch (action.Cell.CellContent.Content)
+        switch (action.Cell.Content.Key)
         {
             case Content.Normal:
                 {

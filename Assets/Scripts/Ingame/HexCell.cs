@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
@@ -22,13 +20,13 @@ public class HexCell : MonoBehaviour
 
     private SpriteRenderer _renderer;
 
-    private CellContent _cellContent;
-    public CellContent CellContent
+    private CellContent _content;
+    public CellContent Content
     {
-        get { return _cellContent; }
+        get { return _content; }
         set
         {
-            _cellContent = value;
+            _content = value;
             _renderer.sprite = value.Sprite;
         }
     }
@@ -41,6 +39,6 @@ public class HexCell : MonoBehaviour
 
     public override string ToString()
     {
-        return "Cell (" + X + ", " + Y + "), Content " + CellContent.Content;
+        return "Cell (" + X + ", " + Y + "), Content " + Content.Key;
     }
 }
