@@ -5,6 +5,7 @@ using Random = System.Random;
 
 public class HexGrid : MonoBehaviour {
     public GameController controller;
+    public BuildingMenu buildingMenu;
     public HexCell hexCell;
 
     public int width = 6;
@@ -105,8 +106,9 @@ public class HexGrid : MonoBehaviour {
             var hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             if (hit.transform != null)
             {
-                var cell = hit.transform.gameObject.GetComponent<HexCell>();
-                controller.RegisterAction(new Action(null, cell));
+                var obj = hit.transform.gameObject;
+                buildingMenu.Use(obj);
+                //controller.RegisterAction(new Action(null, cell));
             }
         }
     }
