@@ -5,9 +5,9 @@ using Random = System.Random;
 
 public class HexGrid : MonoBehaviour {
     public GameController Controller;
+    public ContentHandler ContentHandler;
     public BuildingMenu BuildingMenu;
     public HexCell HexCell;
-    public ContentHandler ContentHandler;
 
     public int width = 6;
     public int height = 6;
@@ -21,7 +21,7 @@ public class HexGrid : MonoBehaviour {
     private HexCell[,] _cells;
     private Random _rnd = new Random();
 
-    void Awake()
+    void Start()
     {
         _cells = new HexCell[height, width];
         var entries = new List<CellContent>(ContentHandler.Contents.Values);

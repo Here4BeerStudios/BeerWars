@@ -3,43 +3,36 @@ using UnityEngine;
 
 public class BuildingMenu : MonoBehaviour {
     public ContentHandler ContentHandler;
-    public HexCell hexCell;
+    public HexCell HexCell;
 
     private bool _visible;
-    private SpriteRenderer[] _renderers;
     private Transform _background;
-    private Dictionary<Content, HexCell> _cells;
-    private Dictionary<Content, HexCell[]> _build;
+    private SpriteRenderer _backgroundRenderer;
+    private Dictionary<Content, CellContent> _contents;
+    private Dictionary<Content, CellContent[]> _build;
+    private List<HexCell> _cells;
 
-    //todo fix raycasting
-
-    void Awake()
+    void Start()
     {
         _background = transform.GetChild(0);
-        _cells = new Dictionary<Content, HexCell>();
-        foreach(var entry in ContentHandler.Contents)
-        {
-            var cell = Instantiate<HexCell>(hexCell);
-            cell.Content = entry.Value;
-            cell.transform.SetParent(transform, false);
-            _cells.Add(entry.Key, cell);
-        }
-        _renderers = GetComponentsInChildren<SpriteRenderer>();
+        _backgroundRenderer = _background.GetComponent<SpriteRenderer>();
+        _backgroundRenderer.enabled = false;
+         _contents = ContentHandler.Contents;
+        _build = new Dictionary<Content, CellContent[]>();
+        _cells = new List<HexCell>();
         //todo correct
-        _build = new Dictionary<Content, HexCell[]>();
         _build.Add(Content.Normal, new[]
         {
-            _cells[Content.Brewery],
-            _cells[Content.Water],
-            _cells[Content.Cornfield],
+            _contents[Content.Brewery],
+            _contents[Content.Water],
+            _contents[Content.Cornfield],
         });
-        EnableRenderers(false);
     }
 
     public void Use(GameObject obj)
     {
         var origin = obj.GetComponent<HexCell>();
-        if (!_visible && _build.ContainsKey(origin.Content))
+        if (!_backgroundRenderer.enabled && _build.ContainsKey(origin.Content))
         {
             var position = obj.transform.localPosition;
             position.z = -1;
@@ -49,29 +42,29 @@ public class BuildingMenu : MonoBehaviour {
             var build = _build[origin.Content];
             var scale = new Vector3(2f * build.Length, 2.5f, 1f);
             _background.localScale = scale;
-
+            
             position.x = (build.Length - 1) * -1;
             position.y = 0;
             position.z = -0.1f;
-            for (var i = 0; i < build.Length; i++)
+            foreach (var content in build)
             {
-                build[i].transform.localPosition = position;
+                var cell = Instantiate<HexCell>(HexCell);
+                cell.Content = content;
+                cell.transform.SetParent(transform, false);
+                cell.transform.localPosition = position;
+                _cells.Add(cell);
                 position.x += 2;
             }
-            EnableRenderers(true);
+            _backgroundRenderer.enabled = true;
         }
         else
         {
-            EnableRenderers(false);
-        }
-    }
-
-    private void EnableRenderers(bool enable)
-    {
-        _visible = enable;
-        foreach(var renderer in _renderers)
-        {
-            renderer.enabled = enable;
+            foreach (var cell in _cells)
+            {
+                Destroy(cell.gameObject);
+            }
+            _cells.Clear();
+            _backgroundRenderer.enabled = false;
         }
     }
 }
