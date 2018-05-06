@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
     public Player Player;
-	public List<Player> _players;
-    public Queue<AbstractAction> _queue; //TODO Threadsafe?
+    public ContentHandler ContentHandler;
+    public HexGrid Grid;
+
+	private List<Player> _players;
+    private Queue<AbstractAction> _queue; //TODO Threadsafe?
 
     void Awake()
     {
@@ -57,6 +60,24 @@ public class GameController : MonoBehaviour {
     private void HandleAction(AbstractAction action)
     {
         Debug.Log(action.ToString());
-        //todo correct handling
+        var actionType = action.GetType();
+        var playerInfo = action.PlayerInfo;
+        var origin = action.Origin;
+        if (actionType.Equals(typeof(BuildAction)))
+        {
+            var building = (action as BuildAction).Building;
+            switch (building)
+            {
+                case Content.Brewery:
+                    {
+                        // TODO update resources
+                        // TODO delay
+                        origin.Content = ContentHandler.Contents[building];
+                        // TODO update other controllers
+                        break;
+                    }
+            }
+        }
+        //todo handling
     }
 }

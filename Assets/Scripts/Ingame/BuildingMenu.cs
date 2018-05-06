@@ -52,7 +52,11 @@ public class BuildingMenu : MonoBehaviour {
             {
                 var cell = Instantiate<HexCell>(HexCell);
                 cell.Content = content;
-                cell.OnClick += () => Controller.RegisterAction(new BuildAction(Controller.Player.PlayerInfo, origin, content));
+                cell.OnClick += () =>
+                {
+                    Controller.RegisterAction(new BuildAction(Controller.Player.PlayerInfo, origin, content));
+                    Reset();
+                };
                 cell.transform.SetParent(transform, false);
                 cell.transform.localPosition = position;
                 _cells.Add(cell);
@@ -63,13 +67,18 @@ public class BuildingMenu : MonoBehaviour {
         }
         else
         {
-            foreach (var cell in _cells)
-            {
-                Destroy(cell.gameObject);
-            }
-            _cells.Clear();
-            _backgroundRenderer.enabled = false;
-            Visible = false;
+            Reset();
         }
+    }
+
+    private void Reset()
+    {
+        foreach (var cell in _cells)
+        {
+            Destroy(cell.gameObject);
+        }
+        _cells.Clear();
+        _backgroundRenderer.enabled = false;
+        Visible = false;
     }
 }
