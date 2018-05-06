@@ -1,26 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Ingame.Actions;
+using Assets.Scripts.Ingame.Contents;
+using System.Collections.Generic;
 using UnityEngine;
 
-public struct Action
-{
-    public readonly Player player;
-    public readonly HexCell Cell;
-
-    public Action(Player player, HexCell cell)
-    {
-        this.player = player;
-        Cell = cell;
-    }
-}
-
 public class GameController : MonoBehaviour {
+    public Player Player;
 	public List<Player> _players;
-    public Queue<Action> _queue; //TODO Threadsafe?
+    public Queue<AbstractAction> _queue; //TODO Threadsafe?
 
     void Awake()
     {
+        //TODO correct player handling
+        Player = new Player
+        {
+            PlayerInfo = new PlayerInfo()
+        };
+
         _players = new List<Player>();
-        _queue = new Queue<Action>();
+        _queue = new Queue<AbstractAction>();
     }
 
     public void AddPlayer(Player player)
@@ -28,7 +25,7 @@ public class GameController : MonoBehaviour {
         _players.Add(player);
     }
 
-    public void RegisterAction(Action action)
+    public void RegisterAction(AbstractAction action)
     {
         _queue.Enqueue(action);
     }
@@ -57,27 +54,9 @@ public class GameController : MonoBehaviour {
 		// For online mode relevant: Just have 1 gamecontroller | Exists on server.
 	}
 
-    private void HandleAction(Action action)
+    private void HandleAction(AbstractAction action)
     {
-        Debug.Log(action.Cell.ToString());
+        Debug.Log(action.ToString());
         //todo correct handling
-        switch (action.Cell.Content.Key)
-        {
-            case Content.Normal:
-                {
-
-                    break;
-                }
-            case Content.Cornfield:
-                {
-
-                    break;
-                }
-            case Content.Forest:
-                {
-
-                    break;
-                }
-        }
     }
 }

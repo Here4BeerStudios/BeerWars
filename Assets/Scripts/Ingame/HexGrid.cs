@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Ingame.Contents;
+using System.Collections.Generic;
 using UnityEngine;
 
 using Random = System.Random;
@@ -46,6 +47,7 @@ public class HexGrid : MonoBehaviour {
         cell.X = x;
         cell.Y = y;
         cell.Content = content;
+        cell.OnClick += () => BuildingMenu.Use(cell);
 
         _cells[y, x] = cell;
     }
@@ -75,17 +77,5 @@ public class HexGrid : MonoBehaviour {
             t.y -= ySensitivity;
         }
         camera.transform.localPosition = t;
-        // click
-        if (Input.GetMouseButtonDown(0))
-        {
-            // use Raycast for click detection behind content sprite
-            var hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.transform != null)
-            {
-                var obj = hit.transform.gameObject;
-                BuildingMenu.Use(obj);
-                //controller.RegisterAction(new Action(null, cell));
-            }
-        }
     }
 }

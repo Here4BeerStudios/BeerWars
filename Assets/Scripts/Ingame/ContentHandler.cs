@@ -1,33 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Ingame.Contents;
+using System.Collections.Generic;
 using UnityEngine;
-
-public enum Content
-{
-    Normal,
-    Cornfield,
-    Water,
-    Forest,
-    Hill,
-    Brewery,
-    Village
-}
-
-public struct CellContent
-{
-    public readonly Content Key;
-    public readonly Sprite Sprite;
-
-    public CellContent(Content key, Sprite sprite)
-    {
-        Key = key;
-        Sprite = sprite;
-    }
-
-    public static implicit operator Content(CellContent cellContent)
-    {
-        return cellContent.Key;
-    }
-}
 
 public class ContentHandler : MonoBehaviour {
     public Dictionary<Content, CellContent> Contents { get; private set; }

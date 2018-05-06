@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Ingame.Contents;
+using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
@@ -20,6 +21,11 @@ public class HexCell : MonoBehaviour
 
     private SpriteRenderer _renderer;
 
+    public delegate void Clicked();
+    public event Clicked OnClick;
+
+    //public CellType Type;
+
     private CellContent _content;
     public CellContent Content
     {
@@ -39,6 +45,11 @@ public class HexCell : MonoBehaviour
 
     public override string ToString()
     {
-        return "Cell (" + X + ", " + Y + "), Content " + Content.Key;
+        return "Cell: (" + X + ", " + Y + "), Content: " + Content.Key;
+    }
+
+    public void OnMouseDown()
+    {
+        OnClick.Invoke();
     }
 }

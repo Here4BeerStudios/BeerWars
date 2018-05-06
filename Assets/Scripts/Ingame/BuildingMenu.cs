@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Ingame.Contents;
+using Assets.Scripts.Ingame.Actions;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildingMenu : MonoBehaviour {
     public ContentHandler ContentHandler;
+    public GameController Controller;
     public HexCell HexCell;
-
-    private bool _visible;
+    
+    public bool Visible {get; private set; }
     private Transform _background;
     private SpriteRenderer _backgroundRenderer;
     private Dictionary<Content, CellContent> _contents;
@@ -29,12 +32,11 @@ public class BuildingMenu : MonoBehaviour {
         });
     }
 
-    public void Use(GameObject obj)
+    public void Use(HexCell origin)
     {
-        var origin = obj.GetComponent<HexCell>();
         if (!_backgroundRenderer.enabled && _build.ContainsKey(origin.Content))
         {
-            var position = obj.transform.localPosition;
+            var position = origin.transform.localPosition;
             position.z = -1;
             position.y += 2;
             transform.position = position;
@@ -50,12 +52,14 @@ public class BuildingMenu : MonoBehaviour {
             {
                 var cell = Instantiate<HexCell>(HexCell);
                 cell.Content = content;
+                cell.OnClick += () => Controller.RegisterAction(new BuildAction(Controller.Player.PlayerInfo, origin, content));
                 cell.transform.SetParent(transform, false);
                 cell.transform.localPosition = position;
                 _cells.Add(cell);
                 position.x += 2;
             }
             _backgroundRenderer.enabled = true;
+            Visible = true;
         }
         else
         {
@@ -65,6 +69,7 @@ public class BuildingMenu : MonoBehaviour {
             }
             _cells.Clear();
             _backgroundRenderer.enabled = false;
+            Visible = false;
         }
     }
 }
