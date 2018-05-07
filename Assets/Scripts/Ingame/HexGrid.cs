@@ -5,13 +5,12 @@ using UnityEngine;
 using Random = System.Random;
 
 public class HexGrid : MonoBehaviour {
-    public GameController Controller;
     public ContentHandler ContentHandler;
     public BuildingMenu BuildingMenu;
     public HexCell HexCell;
 
-    public int width = 6;
-    public int height = 6;
+    public int Width = 100;
+    public int Height = 100;
 
     public float minZoom = 1f;
     public float maxZoom = 15f;
@@ -24,11 +23,11 @@ public class HexGrid : MonoBehaviour {
 
     void Start()
     {
-        _cells = new HexCell[height, width];
+        _cells = new HexCell[Height, Width];
         var entries = new List<CellContent>(ContentHandler.Contents.Values);
-        for (int y = 0, i = 0; y < height; y++)
+        for (int y = 0, i = 0; y < Height; y++)
         {
-            for (var x = 0; x < width; x++)
+            for (var x = 0; x < Width; x++)
             {
                 CreateCell(x, y, i++, entries[_rnd.Next(entries.Count)]);
             }
