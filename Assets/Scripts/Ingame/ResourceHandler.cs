@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class ResourceHandler : MonoBehaviour
 {
@@ -6,12 +7,19 @@ public class ResourceHandler : MonoBehaviour
     public float Intervall;
 
     public float CornIncome;
+    public float WaterIncome;
     public float BeerIncome;
 
-    public float Corn { get; private set; }
-    public float Beer { get; private set; }
+    public float BeerCornCost;
+    public float BeerWaterCost;
+    public float BreweryBeerCost;
+
+    public float Corn;
+    public float Water;
+    public float Beer;
 
     public int Cornsilos;
+    public int Waters;
     public int Breweries;
 
     void Start()
@@ -22,9 +30,12 @@ public class ResourceHandler : MonoBehaviour
     private void UpdateResources()
     {
         Corn += Cornsilos * CornIncome;
-        Beer += Breweries * BeerIncome;
-
-        //Debug.Log("Corn: " + Corn);
-        //Debug.Log("Beer: " + Beer);
+        Water += Waters * WaterIncome;
+        
+        var breweries = Math.Min(Math.Min((int) (Corn / BeerCornCost), (int)(Water / BeerWaterCost)), Breweries);
+        //TODO clarify inform user
+        Beer += breweries * BeerIncome;
+        Corn -= breweries * BeerCornCost;
+        Water -= breweries * BeerWaterCost;
     }
 }

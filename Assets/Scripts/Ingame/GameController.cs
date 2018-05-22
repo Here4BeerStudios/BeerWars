@@ -50,6 +50,7 @@ public class GameController : MonoBehaviour
             x1 = x;
             x2 = x + 1;
         }
+
         //TODO correct background
         Grid[x1, y - 1].Owner = player;
         Grid[x1, y - 1].Content = _contents[Content.Water];
@@ -90,9 +91,16 @@ public class GameController : MonoBehaviour
                 case Content.Brewery:
                 {
                     // TODO update resources
-                    // TODO delay
-                    origin.Content = ContentHandler.Contents[building];
-                    // TODO update other controllers
+                    if (ResourceHandler.Beer >= ResourceHandler.BreweryBeerCost)
+                    {
+                        // TODO delay
+                        ResourceHandler.Beer -= ResourceHandler.BreweryBeerCost;
+                        ResourceHandler.Breweries += 1;
+                        origin.Content = ContentHandler.Contents[building];
+                        // TODO update other controllers
+                    }
+                    //TODO clarify inform user
+
                     break;
                 }
             }
