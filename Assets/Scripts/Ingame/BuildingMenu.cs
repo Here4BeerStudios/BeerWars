@@ -11,7 +11,6 @@ public class BuildingMenu : MonoBehaviour {
     public bool Visible {get; private set; }
     private Transform _background;
     private SpriteRenderer _backgroundRenderer;
-    private Dictionary<Content, CellContent> _contents;
     private Dictionary<Content, CellContent[]> _build;
     private List<HexCell> _cells;
 
@@ -20,15 +19,14 @@ public class BuildingMenu : MonoBehaviour {
         _background = transform.GetChild(0);
         _backgroundRenderer = _background.GetComponent<SpriteRenderer>();
         _backgroundRenderer.enabled = false;
-         _contents = ContentHandler.Contents;
         _build = new Dictionary<Content, CellContent[]>();
         _cells = new List<HexCell>();
         //todo correct
         _build.Add(Content.Normal, new[]
         {
-            _contents[Content.Brewery],
-            _contents[Content.Water],
-            _contents[Content.Cornfield],
+            ContentHandler[Content.Brewery],
+            ContentHandler[Content.Water],
+            ContentHandler[Content.Cornfield],
         });
     }
 

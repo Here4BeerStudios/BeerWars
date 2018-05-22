@@ -2,18 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContentHandler : MonoBehaviour {
-    public Dictionary<Content, CellContent> Contents { get; private set; }
+public class ContentHandler : MonoBehaviour
+{
+    private Dictionary<Content, CellContent> _contents;
 
 	void Awake()
     {
-        Contents = new Dictionary<Content, CellContent>();
+        _contents = new Dictionary<Content, CellContent>();
+        //Load content
         var sprites = Resources.LoadAll<Sprite>(@"Sprites/Cell/Content");
         var spritesDic = new Dictionary<string, Sprite>(sprites.Length);
         foreach (var sprite in sprites)
         {
             spritesDic.Add(sprite.name, sprite);
         }
+        //Add content
         AddContent(Content.Normal, null);
         AddContent(Content.Cornfield, spritesDic["010-field"]);
         AddContent(Content.Water, spritesDic["004-sea"]);
@@ -25,6 +28,11 @@ public class ContentHandler : MonoBehaviour {
 
     private void AddContent(Content content, Sprite sprite)
     {
-        Contents.Add(content, new CellContent(content, sprite));
+        _contents.Add(content, new CellContent(content, sprite));
+    }
+
+    public CellContent this[Content content]
+    {
+        get { return _contents[content]; }
     }
 }

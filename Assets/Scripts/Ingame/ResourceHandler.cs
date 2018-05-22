@@ -3,16 +3,17 @@ using UnityEngine;
 
 public class ResourceHandler : MonoBehaviour
 {
-    public float Delay;
-    public float Intervall;
+    public const float Delay = 3f;
+    public const float Intervall = 2f;
 
-    public float CornIncome;
-    public float WaterIncome;
-    public float BeerIncome;
+    public const float CornIncome = 1f;
+    public const float WaterIncome = 1f;
+    public const float BeerIncome = 1f;
 
-    public float BeerCornCost;
-    public float BeerWaterCost;
-    public float BreweryBeerCost;
+    public const float BeerCornCost = 1f;
+    public const float BeerWaterCost = 1f;
+    public const float BreweryBeerCost = 10f;
+
 
     public float Corn;
     public float Water;

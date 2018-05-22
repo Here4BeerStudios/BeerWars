@@ -13,7 +13,6 @@ public class GameController : MonoBehaviour
     private TempPlayer tempPlayer; //TODO correct Player / PlayerInfo
 
     private Queue<AbstractAction> _queue; //TODO Threadsafe?
-    private Dictionary<Content, CellContent> _contents;
 
     void Awake()
     {
@@ -32,7 +31,6 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        _contents = ContentHandler.Contents;
         Grid.Init();
         Spawn(tempPlayer, 2, 2);
     }
@@ -53,19 +51,19 @@ public class GameController : MonoBehaviour
 
         //TODO correct background
         Grid[x1, y - 1].Owner = player;
-        Grid[x1, y - 1].Content = _contents[Content.Water];
+        Grid[x1, y - 1].Content = ContentHandler[Content.Water];
         Grid[x2, y - 1].Owner = player;
-        Grid[x2, y - 1].Content = _contents[Content.Normal];
+        Grid[x2, y - 1].Content = ContentHandler[Content.Normal];
         Grid[x - 1, y].Owner = player;
-        Grid[x - 1, y].Content = _contents[Content.Water];
+        Grid[x - 1, y].Content = ContentHandler[Content.Water];
         Grid[x, y].Owner = player;
-        Grid[x, y].Content = _contents[Content.Brewery];
+        Grid[x, y].Content = ContentHandler[Content.Brewery];
         Grid[x + 1, y].Owner = player;
-        Grid[x + 1, y].Content = _contents[Content.Cornfield];
+        Grid[x + 1, y].Content = ContentHandler[Content.Cornfield];
         Grid[x1, y + 1].Owner = player;
-        Grid[x1, y + 1].Content = _contents[Content.Normal];
+        Grid[x1, y + 1].Content = ContentHandler[Content.Normal];
         Grid[x2, y + 1].Owner = player;
-        Grid[x2, y + 1].Content = _contents[Content.Cornfield];
+        Grid[x2, y + 1].Content = ContentHandler[Content.Cornfield];
     }
 
     void Update()
@@ -96,7 +94,7 @@ public class GameController : MonoBehaviour
                         // TODO delay
                         ResourceHandler.Beer -= ResourceHandler.BreweryBeerCost;
                         ResourceHandler.Breweries += 1;
-                        origin.Content = ContentHandler.Contents[building];
+                        origin.Content = ContentHandler[building];
                         // TODO update other controllers
                     }
                     //TODO clarify inform user

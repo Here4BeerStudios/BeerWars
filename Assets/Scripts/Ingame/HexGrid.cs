@@ -1,10 +1,9 @@
 ﻿using Assets.Scripts.Ingame.Contents;
-using System.Collections.Generic;
 using UnityEngine;
-
 using Random = System.Random;
 
-public class HexGrid : MonoBehaviour {
+public class HexGrid : MonoBehaviour
+{
     public ContentHandler ContentHandler;
     public BuildingMenu BuildingMenu;
     public HexCell HexCell;
@@ -24,7 +23,7 @@ public class HexGrid : MonoBehaviour {
     public HexCell this[int x, int y]
     {
         get { return _cells[y, x]; }
-    } 
+    }
 
     public void Init()
     {
@@ -33,8 +32,7 @@ public class HexGrid : MonoBehaviour {
             for (var x = 0; x < Width; x++)
             {
                 var r = _rnd.NextDouble();
-                var entry = ContentHandler.Contents[
-                    r < 0.2 ? Content.Cornfield : r < 0.4 ? Content.Water : Content.Normal];
+                var entry = ContentHandler[r < 0.2 ? Content.Cornfield : r < 0.4 ? Content.Water : Content.Normal];
                 CreateCell(x, y, i++, entry);
             }
         }
