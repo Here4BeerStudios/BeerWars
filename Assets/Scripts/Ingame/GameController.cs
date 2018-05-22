@@ -32,14 +32,31 @@ public class GameController : MonoBehaviour
     void Start()
     {
         Grid.Init();
+        Spawn(tempPlayer, 2, 2);
+    }
+
+    private void Spawn(TempPlayer player, int x, int y)
+    {
         //TODO correct background
-        Grid[1, 1].Owner = tempPlayer;
-        Grid[2, 1].Owner = tempPlayer;
-        Grid[1, 2].Owner = tempPlayer;
-        Grid[2, 2].Owner = tempPlayer;
-        Grid[3, 2].Owner = tempPlayer;
-        Grid[1, 3].Owner = tempPlayer;
-        Grid[2, 3].Owner = tempPlayer;
+        int x1, x2;
+        if ((y & 1) == 0)
+        {
+            x1 = x - 1;
+            x2 = x;
+        }
+        else
+        {
+            x1 = x;
+            x2 = x + 1;
+        }
+        Grid[x1, y-1].Owner = player;
+        Grid[x2, y-1].Owner = player;
+        Grid[x-1, y].Owner = player;
+        Grid[x, y].Owner = player;
+        Grid[x+1, y].Owner = player;
+        Grid[x1, y+1].Owner = player;
+        Grid[x2, y+1].Owner = player;
+        Grid[x, y].Content = ContentHandler.Contents[Content.Brewery];
     }
 
     void Update()

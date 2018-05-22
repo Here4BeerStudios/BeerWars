@@ -28,7 +28,13 @@ public class HexGrid : MonoBehaviour {
 
     public void Init()
     {
-        var entries = new List<CellContent>(ContentHandler.Contents.Values);
+        var entries = new List<CellContent>();
+        entries.AddRange(new []
+        {
+            ContentHandler.Contents[Content.Normal],
+            ContentHandler.Contents[Content.Water],
+            ContentHandler.Contents[Content.Cornfield],
+        });
         for (int y = 0, i = 0; y < Height; y++)
         {
             for (var x = 0; x < Width; x++)
