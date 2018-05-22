@@ -3,28 +3,38 @@ using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
-    public const float outerRadius = 1;
-    public const float innerRadius = outerRadius * 0.866025404f;
+    public const float OuterRadius = 1;
+    public const float InnerRadius = OuterRadius * 0.866025404f;
 
     public static Vector3[] Corners =
     {
-        new Vector3(0f, 0f, outerRadius),
-        new Vector3(innerRadius, 0f, 0.5f * outerRadius),
-        new Vector3(innerRadius, 0f, -0.5f * outerRadius),
-        new Vector3(0f, 0f, -outerRadius),
-        new Vector3(-innerRadius, 0f, -0.5f * outerRadius),
-        new Vector3(-innerRadius, 0f, 0.5f * outerRadius),
-        new Vector3(0f, 0f, outerRadius)
+        new Vector3(0f, 0f, OuterRadius),
+        new Vector3(InnerRadius, 0f, 0.5f * OuterRadius),
+        new Vector3(InnerRadius, 0f, -0.5f * OuterRadius),
+        new Vector3(0f, 0f, -OuterRadius),
+        new Vector3(-InnerRadius, 0f, -0.5f * OuterRadius),
+        new Vector3(-InnerRadius, 0f, 0.5f * OuterRadius),
+        new Vector3(0f, 0f, OuterRadius)
     };
 
     public int X, Y;
 
-    private SpriteRenderer _renderer;
+    private SpriteRenderer _backgroundRenderer, _contentRenderer;
 
     public delegate void Clicked();
     public event Clicked OnClick;
 
-    //public CellType Type;
+    //TODO correct Player / PlayerInfo
+    private TempPlayer _owner;
+    public TempPlayer Owner
+    {
+        get { return _owner; }
+        set
+        {
+            _owner = value;
+            _backgroundRenderer.color = value != null ? value.Background : Color.white;
+        }
+    }
 
     private CellContent _content;
     public CellContent Content
@@ -33,14 +43,15 @@ public class HexCell : MonoBehaviour
         set
         {
             _content = value;
-            _renderer.sprite = value.Sprite;
+            _contentRenderer.sprite = value.Sprite;
         }
     }
 
     void Awake()
     {
         var child = gameObject.transform.GetChild(0);
-        _renderer = child.GetComponent<SpriteRenderer>();
+        _backgroundRenderer = GetComponent<SpriteRenderer>();
+        _contentRenderer = child.GetComponent<SpriteRenderer>();
     }
 
     public override string ToString()

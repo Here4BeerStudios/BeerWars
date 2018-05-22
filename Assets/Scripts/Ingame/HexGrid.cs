@@ -12,18 +12,22 @@ public class HexGrid : MonoBehaviour {
     public int Width = 100;
     public int Height = 100;
 
-    public float minZoom = 1f;
-    public float maxZoom = 15f;
-    public float zoomSensitivity = 2f;
-    public float xSensitivity = 0.2f;
-    public float ySensitivity = 0.2f;
-
     private HexCell[,] _cells;
-    private Random _rnd = new Random();
+    private Random _rnd;
 
-    void Start()
+    void Awake()
     {
         _cells = new HexCell[Height, Width];
+        _rnd = new Random();
+    }
+
+    public HexCell this[int x, int y]
+    {
+        get { return _cells[y, x]; }
+    } 
+
+    public void Init()
+    {
         var entries = new List<CellContent>(ContentHandler.Contents.Values);
         for (int y = 0, i = 0; y < Height; y++)
         {
@@ -36,8 +40,8 @@ public class HexGrid : MonoBehaviour {
 
     private void CreateCell(int x, int y, int i, CellContent content)
     {
-        var position = new Vector3((x + y * 0.5f - y / 2) * (HexCell.innerRadius * 2f),
-            y * (HexCell.outerRadius * 1.5f), 0f);
+        var position = new Vector3((x + y * 0.5f - y / 2) * (HexCell.InnerRadius * 2f),
+            y * (HexCell.OuterRadius * 1.5f), 0f);
 
         var cell = Instantiate<HexCell>(HexCell);
         cell.transform.SetParent(transform, false);
@@ -49,32 +53,5 @@ public class HexGrid : MonoBehaviour {
         cell.OnClick += () => BuildingMenu.Use(cell);
 
         _cells[y, x] = cell;
-    }
-
-    void Update()
-    {
-        var camera = Camera.main;
-        //zoom
-        var zoom = Input.GetAxis("Mouse ScrollWheel") * -zoomSensitivity;
-        camera.orthographicSize = Mathf.Clamp(camera.orthographicSize + zoom, minZoom, maxZoom);
-        //moving
-        var m = Input.mousePosition;
-        var t = camera.transform.localPosition;
-        if (m.x >= Screen.width)
-        {
-            t.x += xSensitivity;
-        } else if (m.x <= 0)
-        {
-            t.x -= xSensitivity;
-        }
-        if (m.y >= Screen.height)
-        {
-            t.y += ySensitivity;
-        }
-        else if (m.y <= 0)
-        {
-            t.y -= ySensitivity;
-        }
-        camera.transform.localPosition = t;
     }
 }

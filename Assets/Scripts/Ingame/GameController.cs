@@ -3,22 +3,24 @@ using Assets.Scripts.Ingame.Contents;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour
+{
     public Player Player;
     public ContentHandler ContentHandler;
     public ResourceHandler ResourceHandler;
     public HexGrid Grid;
-    
+
+    private TempPlayer tempPlayer; //TODO correct Player / PlayerInfo
+
     private Queue<AbstractAction> _queue; //TODO Threadsafe?
 
     void Awake()
     {
-        //TODO correct player handling
-        Player = new Player
+        Player = new Player()
         {
             PlayerInfo = new PlayerInfo()
         };
-        
+        tempPlayer = new TempPlayer("Guest", null, Color.green);
         _queue = new Queue<AbstractAction>();
     }
 
@@ -26,22 +28,28 @@ public class GameController : MonoBehaviour {
     {
         _queue.Enqueue(action);
     }
-    
-	void Start () {
-		// Here init map?
 
-		// Define territories?
+    void Start()
+    {
+        Grid.Init();
+        //TODO correct background
+        Grid[1, 1].Owner = tempPlayer;
+        Grid[2, 1].Owner = tempPlayer;
+        Grid[1, 2].Owner = tempPlayer;
+        Grid[2, 2].Owner = tempPlayer;
+        Grid[3, 2].Owner = tempPlayer;
+        Grid[1, 3].Owner = tempPlayer;
+        Grid[2, 3].Owner = tempPlayer;
+    }
 
-		// Some other stuff?
-	}
-	
-	void Update () {
+    void Update()
+    {
         while (_queue.Count > 0)
         {
             //TODO validate action
             HandleAction(_queue.Dequeue());
         }
-	}
+    }
 
     private void HandleAction(AbstractAction action)
     {
@@ -55,15 +63,16 @@ public class GameController : MonoBehaviour {
             switch (building)
             {
                 case Content.Brewery:
-                    {
-                        // TODO update resources
-                        // TODO delay
-                        origin.Content = ContentHandler.Contents[building];
-                        // TODO update other controllers
-                        break;
-                    }
+                {
+                    // TODO update resources
+                    // TODO delay
+                    origin.Content = ContentHandler.Contents[building];
+                    // TODO update other controllers
+                    break;
+                }
             }
         }
+
         //todo handling
     }
 }
