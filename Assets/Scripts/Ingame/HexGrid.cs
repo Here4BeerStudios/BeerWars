@@ -9,8 +9,8 @@ public class HexGrid : MonoBehaviour {
     public BuildingMenu BuildingMenu;
     public HexCell HexCell;
 
-    public int Width = 100;
-    public int Height = 100;
+    public int Width = 50;
+    public int Height = 50;
 
     private HexCell[,] _cells;
     private Random _rnd;
@@ -28,18 +28,14 @@ public class HexGrid : MonoBehaviour {
 
     public void Init()
     {
-        var entries = new List<CellContent>();
-        entries.AddRange(new []
-        {
-            ContentHandler.Contents[Content.Normal],
-            ContentHandler.Contents[Content.Water],
-            ContentHandler.Contents[Content.Cornfield],
-        });
         for (int y = 0, i = 0; y < Height; y++)
         {
             for (var x = 0; x < Width; x++)
             {
-                CreateCell(x, y, i++, entries[_rnd.Next(entries.Count)]);
+                var r = _rnd.NextDouble();
+                var entry = ContentHandler.Contents[
+                    r < 0.2 ? Content.Cornfield : r < 0.4 ? Content.Water : Content.Normal];
+                CreateCell(x, y, i++, entry);
             }
         }
     }

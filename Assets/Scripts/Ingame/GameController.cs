@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     private TempPlayer tempPlayer; //TODO correct Player / PlayerInfo
 
     private Queue<AbstractAction> _queue; //TODO Threadsafe?
+    private Dictionary<Content, CellContent> _contents;
 
     void Awake()
     {
@@ -31,13 +32,13 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        _contents = ContentHandler.Contents;
         Grid.Init();
         Spawn(tempPlayer, 2, 2);
     }
 
     private void Spawn(TempPlayer player, int x, int y)
     {
-        //TODO correct background
         int x1, x2;
         if ((y & 1) == 0)
         {
@@ -49,14 +50,21 @@ public class GameController : MonoBehaviour
             x1 = x;
             x2 = x + 1;
         }
-        Grid[x1, y-1].Owner = player;
-        Grid[x2, y-1].Owner = player;
-        Grid[x-1, y].Owner = player;
+        //TODO correct background
+        Grid[x1, y - 1].Owner = player;
+        Grid[x1, y - 1].Content = _contents[Content.Water];
+        Grid[x2, y - 1].Owner = player;
+        Grid[x2, y - 1].Content = _contents[Content.Normal];
+        Grid[x - 1, y].Owner = player;
+        Grid[x - 1, y].Content = _contents[Content.Water];
         Grid[x, y].Owner = player;
-        Grid[x+1, y].Owner = player;
-        Grid[x1, y+1].Owner = player;
-        Grid[x2, y+1].Owner = player;
-        Grid[x, y].Content = ContentHandler.Contents[Content.Brewery];
+        Grid[x, y].Content = _contents[Content.Brewery];
+        Grid[x + 1, y].Owner = player;
+        Grid[x + 1, y].Content = _contents[Content.Cornfield];
+        Grid[x1, y + 1].Owner = player;
+        Grid[x1, y + 1].Content = _contents[Content.Normal];
+        Grid[x2, y + 1].Owner = player;
+        Grid[x2, y + 1].Content = _contents[Content.Cornfield];
     }
 
     void Update()
