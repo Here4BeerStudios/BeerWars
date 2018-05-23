@@ -23,7 +23,7 @@ public class ContentHandler : MonoBehaviour
         //AddContent(Content.Forest, spritesDic["Forest"]);
         //AddContent(Content.Hill, spritesDic["Hill"]);
         AddContent(Content.Brewery, spritesDic["001-brewery"]);
-        //AddContent(Content.Village, spritesDic["Village"]);
+        AddContent(Content.Village, spritesDic["005-beer-3"]);   //todo fix village sprite
     }
 
     private void AddContent(Content content, Sprite sprite)

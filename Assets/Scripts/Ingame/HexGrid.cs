@@ -32,7 +32,7 @@ public class HexGrid : MonoBehaviour
             for (var x = 0; x < Width; x++)
             {
                 var r = _rnd.NextDouble();
-                var entry = ContentHandler[r < 0.2 ? Content.Cornfield : r < 0.4 ? Content.Water : Content.Normal];
+                var entry = ContentHandler[r < 0.2 ? Content.Village : r < 0.4 ? Content.Cornfield : r < 0.6 ? Content.Water : Content.Normal];
                 CreateCell(x, y, i++, entry);
             }
         }
