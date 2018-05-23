@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
 
     private TempPlayer tempPlayer; //TODO correct Player / PlayerInfo
 
-    private Queue<AbstractAction> _queue; //TODO Threadsafe?
+    private Queue<AbstractAction> _queue;
 
     void Awake()
     {
@@ -96,10 +96,10 @@ public class GameController : MonoBehaviour
             cell.Owner = tempPlayer;
             if (cell.Content == Content.Cornfield)
             {
-                ResourceHandler.Cornsilos += 1;
+                ResourceHandler.CornFields += 1;
             } else if (cell.Content == Content.Water)
             {
-                ResourceHandler.Waters += 1;
+                ResourceHandler.WaterFields += 1;
             }
         }
     }

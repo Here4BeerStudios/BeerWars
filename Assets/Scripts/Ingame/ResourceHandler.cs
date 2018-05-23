@@ -20,8 +20,8 @@ public class ResourceHandler : MonoBehaviour
     public float Water;
     public float Beer;
 
-    public int Cornsilos;
-    public int Waters;
+    public int CornFields;
+    public int WaterFields;
     public int Breweries;
 
     void Start()
@@ -31,8 +31,8 @@ public class ResourceHandler : MonoBehaviour
 
     private void UpdateResources()
     {
-        Corn += Cornsilos * CornIncome;
-        Water += Waters * WaterIncome;
+        Corn += CornFields * CornIncome;
+        Water += WaterFields * WaterIncome;
         
         var breweries = Math.Min(Math.Min((int) (Corn / BeerCornCost), (int)(Water / BeerWaterCost)), Breweries);
         //TODO clarify inform user
