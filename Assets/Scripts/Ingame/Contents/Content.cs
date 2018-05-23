@@ -8,6 +8,7 @@
         Forest,
         Hill,
         Brewery,
-        Village
+        Village,
+        Delivery
     }
 }

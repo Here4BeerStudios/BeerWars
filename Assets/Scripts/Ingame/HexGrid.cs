@@ -5,7 +5,7 @@ using Random = System.Random;
 public class HexGrid : MonoBehaviour
 {
     public ContentHandler ContentHandler;
-    public BuildingMenu BuildingMenu;
+    public InteractionactionMenu InteractionactionMenu;
     public HexCell HexCell;
 
     public int Width = 50;
@@ -47,10 +47,9 @@ public class HexGrid : MonoBehaviour
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
-        cell.X = x;
-        cell.Y = y;
+        cell.Pos = new Vector2Int(x, y);
         cell.Content = content;
-        cell.OnClick += () => BuildingMenu.Use(cell);
+        cell.OnClick += () => InteractionactionMenu.Use(cell);
 
         _cells[y, x] = cell;
     }

@@ -66,6 +66,44 @@ public class GameController : MonoBehaviour
         Grid[x2, y + 1].Content = ContentHandler[Content.Cornfield];
     }
 
+    private void Occupy(TempPlayer player, int x, int y, int level)
+    {
+        int x1, x2;
+        if ((y & 1) == 0)
+        {
+            x1 = x - 1;
+            x2 = x;
+        }
+        else
+        {
+            x1 = x;
+            x2 = x + 1;
+        }
+
+        var cells = new[]
+        {
+            Grid[x1, y - 1],
+            Grid[x2, y - 1],
+            Grid[x - 1, y],
+            Grid[x, y],
+            Grid[x + 1, y],
+            Grid[x1, y + 1],
+            Grid[x2, y + 1],
+        };
+
+        foreach (var cell in cells)
+        {
+            cell.Owner = tempPlayer;
+            if (cell.Content == Content.Cornfield)
+            {
+                ResourceHandler.Cornsilos += 1;
+            } else if (cell.Content == Content.Water)
+            {
+                ResourceHandler.Waters += 1;
+            }
+        }
+    }
+
     void Update()
     {
         while (_queue.Count > 0)
@@ -94,13 +132,25 @@ public class GameController : MonoBehaviour
                         // TODO delay
                         ResourceHandler.Beer -= ResourceHandler.BreweryBeerCost;
                         ResourceHandler.Breweries += 1;
-                        origin.Content = ContentHandler[building];
+                        Grid[origin.x, origin.y].Content = ContentHandler[building];
                         // TODO update other controllers
                     }
                     //TODO clarify inform user
 
                     break;
                 }
+            }
+        }
+        else if (actionType == typeof(DeliveryAction))
+        {
+            if (ResourceHandler.Beer >= ResourceHandler.VillageBeerCost)
+            {
+                // TODO delay
+                var targetPos = ((DeliveryAction) action).Origin;
+                ResourceHandler.Beer -= ResourceHandler.VillageBeerCost;
+                //todo handle correct player
+                Occupy(tempPlayer, targetPos.x, targetPos.y, 1);
+                // TODO update other controllers
             }
         }
 

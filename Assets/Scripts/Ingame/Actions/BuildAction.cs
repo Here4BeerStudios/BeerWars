@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Ingame.Contents;
+using UnityEngine;
 
 namespace Assets.Scripts.Ingame.Actions
 {
@@ -6,7 +7,7 @@ namespace Assets.Scripts.Ingame.Actions
     {
         public readonly Content Building;
 
-        public BuildAction(PlayerInfo player, HexCell origin, Content building) : base(player, origin)
+        public BuildAction(PlayerInfo player, Vector2Int origin, Content building) : base(player, origin)
         {
             Building = building;
         }

@@ -17,7 +17,7 @@ public class HexCell : MonoBehaviour
         new Vector3(0f, 0f, OuterRadius)
     };
 
-    public int X, Y;
+    public Vector2Int Pos;
 
     private SpriteRenderer _backgroundRenderer, _contentRenderer;
 
@@ -56,7 +56,7 @@ public class HexCell : MonoBehaviour
 
     public override string ToString()
     {
-        return "Cell: (" + X + ", " + Y + "), Content: " + Content.Key;
+        return "Cell: (" + Pos.x + ", " + Pos.y + "), Content: " + Content.Key;
     }
 
     public void OnMouseDown()
