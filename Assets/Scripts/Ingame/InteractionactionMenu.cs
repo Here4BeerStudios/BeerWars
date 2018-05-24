@@ -4,27 +4,27 @@ using Assets.Scripts.Ingame.Actions;
 using System.Collections.Generic;
 using UnityEngine;
 
-//struct Interaction
-//{
-//    public readonly CellContent[] Contents;
-//    public readonly Func<Player, HexCell, Content, State> OnClick;
+struct InteractionGroup
+{
+    public readonly Predicate<HexCell> CanClick;
+    public readonly ConcreteInteraction[] Interactions;
 
-//    public Interaction(CellContent[] contents, Func<Player, HexCell, Content, State> onClick)
-//    {
-//        Contents = contents;
-//        OnClick = onClick;
-//    }
-//}
+    public InteractionGroup(Predicate<HexCell> canClick, ConcreteInteraction[] interactions)
+    {
+        CanClick = canClick;
+        Interactions = interactions;
+    }
+}
 
-struct Interaction
+struct ConcreteInteraction
 {
     public readonly CellContent Content;
-    public readonly ActionCode Code;
+    public readonly Action<HexCell> OnClick;
 
-    public Interaction(CellContent content, ActionCode code)
+    public ConcreteInteraction(CellContent content, Action<HexCell> onClick)
     {
         Content = content;
-        Code = code;
+        OnClick = onClick;
     }
 }
 
@@ -37,78 +37,89 @@ public class InteractionactionMenu : MonoBehaviour {
     private Transform _background;
     private SpriteRenderer _backgroundRenderer;
     //private Dictionary<Content, Interaction> _interactions;
-    private int _playerId;
-    private Dictionary<Content, Interaction[]> _interactions;
+    private Player _player;
+    private ResourceHandler _resources;
+    private Dictionary<Content, InteractionGroup> _interactions;
     private List<HexCell> _cells;
 
     void Start()
     {
-        _playerId = Controller.Player.ID;
+        _player = Controller.Player;
+        _resources = Controller.PlayerResource;
         _background = transform.GetChild(0);
         _backgroundRenderer = _background.GetComponent<SpriteRenderer>();
         _backgroundRenderer.enabled = false;
         _cells = new List<HexCell>();
-        //_interactions = new Dictionary<Content, Interaction>();
-        _interactions = new Dictionary<Content, Interaction[]>();
+        _interactions = new Dictionary<Content, InteractionGroup>();
         InitInteractions();
     }
 
     private void InitInteractions()
     {
-        _interactions.Add(Content.Normal, new []
+        //build actions
+        _interactions.Add(Content.Normal, new InteractionGroup(cell => cell.Owner == _player, new []
         {
-            new Interaction(ContentHandler[Content.Brewery], ActionCode.BUILD_BREWERY), 
-        });
-        _interactions.Add(Content.Village, new[]
+            new ConcreteInteraction(ContentHandler[Content.Brewery], cell =>
+            {
+                if (cell.Owner == _player && _resources.Beer >= ResourceHandler.BreweryBeerCost)
+                {
+                    _resources.Beer -= ResourceHandler.BreweryBeerCost;
+                    _resources.Breweries += 1;
+                    Controller.RegisterState(new State(_player.ID, cell.Pos, ActionCode.BUILD_BREWERY));
+                }
+            }), 
+        }));
+        //delivery action
+        _interactions.Add(Content.Village, new InteractionGroup(cell => true, new []
         {
-            new Interaction(ContentHandler[Content.Delivery], ActionCode.DELIVERY),
-        });
-
-        //_interactions.Add(Content.Normal, new Interaction(new []
-        //{
-        //    ContentHandler[Content.Brewery]
-        //}, (player, origin, content) => new State(player.ID, origin.Pos, ActionCode.BUILD_BREWERY)));
-
-        //_interactions.Add(Content.Village, new Interaction(new[]
-        //{
-        //    ContentHandler[Content.Delivery]
-        //}, (player, origin, content) => new DeliveryAction(player, origin.Pos)));
+            new ConcreteInteraction(ContentHandler[Content.Delivery], cell =>
+            {
+                if (_resources.Beer >= ResourceHandler.VillageBeerCost)
+                {
+                    _resources.Beer -= ResourceHandler.VillageBeerCost;
+                    Controller.RegisterState(new State(_player.ID, cell.Pos, ActionCode.DELIVERY));
+                }
+            }), 
+        }));
     }
 
     public void Use(HexCell origin)
     {
         if (!_backgroundRenderer.enabled && _interactions.ContainsKey(origin.Content))
         {
-            var position = origin.transform.localPosition;
-            position.z = -1;
-            position.y += 2;
-            transform.position = position;
-
-            var interactions = _interactions[origin.Content];
-            //var len = interaction.Contents.Length;
-            var len = interactions.Length;
-            var scale = new Vector3(2f * len, 2.5f, 1f);
-            _background.localScale = scale;
-            
-            position.x = (len - 1) * -1;
-            position.y = 0;
-            position.z = -0.1f;
-            foreach (var interaction in interactions)
+            var interactionGroup = _interactions[origin.Content];
+            if (interactionGroup.CanClick(origin))
             {
-                var cell = Instantiate<HexCell>(HexCell);
-                cell.Content = interaction.Content;
-                cell.OnClick += () =>
+                var position = origin.transform.localPosition;
+                position.z = -1;
+                position.y += 2;
+                transform.position = position;
+
+                //var len = interaction.Contents.Length;
+                var len = interactionGroup.Interactions.Length;
+                var scale = new Vector3(2f * len, 2.5f, 1f);
+                _background.localScale = scale;
+
+                position.x = (len - 1) * -1;
+                position.y = 0;
+                position.z = -0.1f;
+                foreach (var interaction in interactionGroup.Interactions)
                 {
-                    Controller.RegisterState(new State(_playerId, origin.Pos, interaction.Code));
-                    Reset();
-                };
-                cell.transform.SetParent(transform, false);
-                cell.transform.localPosition = position;
-                _cells.Add(cell);
-                position.x += 2;
+                    var cell = Instantiate<HexCell>(HexCell);
+                    cell.Content = interaction.Content;
+                    cell.OnClick += () =>
+                    {
+                        interaction.OnClick(origin);
+                        Reset();
+                    };
+                    cell.transform.SetParent(transform, false);
+                    cell.transform.localPosition = position;
+                    _cells.Add(cell);
+                    position.x += 2;
+                }
+                _backgroundRenderer.enabled = true;
+                Visible = true;
             }
-            _backgroundRenderer.enabled = true;
-            Visible = true;
         }
         else
         {

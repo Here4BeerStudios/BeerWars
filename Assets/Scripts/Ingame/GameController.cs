@@ -114,7 +114,7 @@ public class GameController : MonoBehaviour
     {
         while (_queue.Count > 0)
         {
-            //TODO validate state
+            //TODO validate state?
             HandleState(_queue.Dequeue());
         }
     }
@@ -127,30 +127,17 @@ public class GameController : MonoBehaviour
         {
             case ActionCode.BUILD_BREWERY:
             {
-                // TODO update resources
-                if (PlayerResource.Beer >= ResourceHandler.BreweryBeerCost)
-                {
-                    Grid[pos.x, pos.y].Content = ContentHandler[Content.Brewery];
-                    // TODO delay
-                    PlayerResource.Beer -= ResourceHandler.BreweryBeerCost;
-                    PlayerResource.Breweries += 1;
-                    // TODO update other controllers
-                }
-
+                // TODO delay
+                Grid[pos.x, pos.y].Content = ContentHandler[Content.Brewery];
                 //TODO clarify inform user
                 break;
             }
 
             case ActionCode.DELIVERY:
             {
-                if (PlayerResource.Beer >= ResourceHandler.VillageBeerCost)
-                {
-                    // TODO delay
-                    PlayerResource.Beer -= ResourceHandler.VillageBeerCost;
-                    //todo handle correct player
-                    Occupy(statePlayer, pos.x, pos.y);
-                    // TODO update other controllers
-                }
+                // TODO delay
+                Occupy(statePlayer, pos.x, pos.y);
+                // TODO update other controllers
                 break;
             }
         }
