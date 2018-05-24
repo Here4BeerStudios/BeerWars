@@ -1,9 +1,8 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ResourceUpdater : MonoBehaviour
+public class Overlay : MonoBehaviour
 {
     public ResourceHandler Resources;
 

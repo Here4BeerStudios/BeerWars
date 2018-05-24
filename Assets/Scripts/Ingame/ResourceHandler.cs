@@ -15,14 +15,83 @@ public class ResourceHandler : MonoBehaviour
     public const float BreweryBeerCost = 10f;
     public const float VillageBeerCost = 50f;
 
+    private float _corn;
+    public float Corn
+    {
+        get { return _corn; }
+        set
+        {
+            if (value >= 0)
+            {
+                _corn = value;
+            }
+        }
+    }
 
-    public float Corn;
-    public float Water;
-    public float Beer;
+    private float _water;
+    public float Water
+    {
+        get { return _water; }
+        set
+        {
+            if (value >= 0)
+            {
+                _water = value;
+            }
+        }
+    }
 
-    public int CornFields;
-    public int WaterFields;
-    public int Breweries;
+    private float _beer;
+    public float Beer
+    {
+        get { return _beer; }
+        set
+        {
+            if (value >= 0)
+            {
+                _beer = value;
+            }
+        }
+    }
+
+    private int _cornfields;
+    public int CornFields
+    {
+        get { return _cornfields; }
+        set
+        {
+            if (value >= 0)
+            {
+                _cornfields = value;
+            }
+        }
+    }
+
+    private int _waterfields;
+    public int WaterFields
+    {
+        get { return _waterfields; }
+        set
+        {
+            if (value >= 0)
+            {
+                _waterfields = value;
+            }
+        }
+    }
+
+    private int _breweries;
+    public int Breweries
+    {
+        get { return _breweries; }
+        set
+        {
+            if (value >= 0)
+            {
+                _breweries = value;
+            }
+        }
+    }
 
     void Start()
     {

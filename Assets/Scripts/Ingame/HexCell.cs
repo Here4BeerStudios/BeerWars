@@ -23,10 +23,9 @@ public class HexCell : MonoBehaviour
 
     public delegate void Clicked();
     public event Clicked OnClick;
-
-    //TODO correct Player / PlayerInfo
-    private TempPlayer _owner;
-    public TempPlayer Owner
+    
+    private Player _owner;
+    public Player Owner
     {
         get { return _owner; }
         set

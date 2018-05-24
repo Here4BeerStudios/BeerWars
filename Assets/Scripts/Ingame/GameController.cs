@@ -5,22 +5,15 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public Player Player;
     public ContentHandler ContentHandler;
-    public ResourceHandler ResourceHandler;
     public HexGrid Grid;
-
-    private TempPlayer tempPlayer; //TODO correct Player / PlayerInfo
+    public Player Player;
+    public ResourceHandler PlayerResource;
 
     private Queue<AbstractAction> _queue;
 
     void Awake()
     {
-        Player = new Player()
-        {
-            PlayerInfo = new PlayerInfo()
-        };
-        tempPlayer = new TempPlayer("Guest", null, Color.green);
         _queue = new Queue<AbstractAction>();
     }
 
@@ -32,10 +25,10 @@ public class GameController : MonoBehaviour
     void Start()
     {
         Grid.Init();
-        Spawn(tempPlayer, 2, 2);
+        Spawn(Player, 2, 2);
     }
 
-    private void Spawn(TempPlayer player, int x, int y)
+    private void Spawn(Player player, int x, int y)
     {
         int x1, x2;
         if ((y & 1) == 0)
@@ -48,8 +41,7 @@ public class GameController : MonoBehaviour
             x1 = x;
             x2 = x + 1;
         }
-
-        //TODO correct background
+        
         Grid[x1, y - 1].Owner = player;
         Grid[x1, y - 1].Content = ContentHandler[Content.Water];
         Grid[x2, y - 1].Owner = player;
@@ -64,9 +56,13 @@ public class GameController : MonoBehaviour
         Grid[x1, y + 1].Content = ContentHandler[Content.Normal];
         Grid[x2, y + 1].Owner = player;
         Grid[x2, y + 1].Content = ContentHandler[Content.Cornfield];
+
+        PlayerResource.CornFields = 2;
+        PlayerResource.WaterFields = 2;
+        PlayerResource.Breweries = 1;
     }
 
-    private void Occupy(TempPlayer player, int x, int y, int level)
+    private void Occupy(Player player, int x, int y, int level)
     {
         int x1, x2;
         if ((y & 1) == 0)
@@ -93,14 +89,19 @@ public class GameController : MonoBehaviour
 
         foreach (var cell in cells)
         {
-            cell.Owner = tempPlayer;
-            if (cell.Content == Content.Cornfield)
+            cell.Owner = player;
+            if (player == Player)
             {
-                ResourceHandler.CornFields += 1;
-            } else if (cell.Content == Content.Water)
-            {
-                ResourceHandler.WaterFields += 1;
+                if (cell.Content == Content.Cornfield)
+                {
+                    PlayerResource.CornFields += 1;
+                }
+                else if (cell.Content == Content.Water)
+                {
+                    PlayerResource.WaterFields += 1;
+                }
             }
+            
         }
     }
 
@@ -117,7 +118,8 @@ public class GameController : MonoBehaviour
     {
         Debug.Log(action.ToString());
         var actionType = action.GetType();
-        var playerInfo = action.PlayerInfo;
+        //var playerInfo = action.PlayerInfo;
+        
         var origin = action.Origin;
         if (actionType == typeof(BuildAction))
         {
@@ -127,11 +129,11 @@ public class GameController : MonoBehaviour
                 case Content.Brewery:
                 {
                     // TODO update resources
-                    if (ResourceHandler.Beer >= ResourceHandler.BreweryBeerCost)
+                    if (PlayerResource.Beer >= ResourceHandler.BreweryBeerCost)
                     {
-                        // TODO delay
-                        ResourceHandler.Beer -= ResourceHandler.BreweryBeerCost;
-                        ResourceHandler.Breweries += 1;
+                            // TODO delay
+                        PlayerResource.Beer -= ResourceHandler.BreweryBeerCost;
+                        PlayerResource.Breweries += 1;
                         Grid[origin.x, origin.y].Content = ContentHandler[building];
                         // TODO update other controllers
                     }
@@ -143,13 +145,13 @@ public class GameController : MonoBehaviour
         }
         else if (actionType == typeof(DeliveryAction))
         {
-            if (ResourceHandler.Beer >= ResourceHandler.VillageBeerCost)
+            if (PlayerResource.Beer >= ResourceHandler.VillageBeerCost)
             {
                 // TODO delay
                 var targetPos = ((DeliveryAction) action).Origin;
-                ResourceHandler.Beer -= ResourceHandler.VillageBeerCost;
+                PlayerResource.Beer -= ResourceHandler.VillageBeerCost;
                 //todo handle correct player
-                Occupy(tempPlayer, targetPos.x, targetPos.y, 1);
+                Occupy(Player, targetPos.x, targetPos.y, 1);
                 // TODO update other controllers
             }
         }
