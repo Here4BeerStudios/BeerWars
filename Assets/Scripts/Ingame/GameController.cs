@@ -10,20 +10,25 @@ public class GameController : MonoBehaviour
     public Player Player;
     public ResourceHandler PlayerResource;
 
-    private Queue<AbstractAction> _queue;
+    private Player[] _players;
+    private Queue<State> _queue;
 
     void Awake()
     {
-        _queue = new Queue<AbstractAction>();
+        _players = new Player[10]; //todo check max players
+        _queue = new Queue<State>();
     }
 
-    public void RegisterAction(AbstractAction action)
+    public void RegisterState(State state)
     {
-        _queue.Enqueue(action);
+        _queue.Enqueue(state);
     }
 
     void Start()
     {
+        Player.ID = 1;
+        _players[1] = Player;
+
         Grid.Init();
         Spawn(Player, 2, 2);
     }
@@ -41,7 +46,7 @@ public class GameController : MonoBehaviour
             x1 = x;
             x2 = x + 1;
         }
-        
+
         Grid[x1, y - 1].Owner = player;
         Grid[x1, y - 1].Content = ContentHandler[Content.Water];
         Grid[x2, y - 1].Owner = player;
@@ -62,7 +67,7 @@ public class GameController : MonoBehaviour
         PlayerResource.Breweries = 1;
     }
 
-    private void Occupy(Player player, int x, int y, int level)
+    private void Occupy(Player player, int x, int y)
     {
         int x1, x2;
         if ((y & 1) == 0)
@@ -76,6 +81,7 @@ public class GameController : MonoBehaviour
             x2 = x + 1;
         }
 
+        //todo check occupy level
         var cells = new[]
         {
             Grid[x1, y - 1],
@@ -101,7 +107,6 @@ public class GameController : MonoBehaviour
                     PlayerResource.WaterFields += 1;
                 }
             }
-            
         }
     }
 
@@ -109,53 +114,45 @@ public class GameController : MonoBehaviour
     {
         while (_queue.Count > 0)
         {
-            //TODO validate action
-            HandleAction(_queue.Dequeue());
+            //TODO validate state
+            HandleState(_queue.Dequeue());
         }
     }
 
-    private void HandleAction(AbstractAction action)
+    private void HandleState(State state)
     {
-        Debug.Log(action.ToString());
-        var actionType = action.GetType();
-        //var playerInfo = action.PlayerInfo;
-        
-        var origin = action.Origin;
-        if (actionType == typeof(BuildAction))
+        var statePlayer = _players[state.PlayerId];
+        var pos = state.Origin;
+        switch (state.Code)
         {
-            var building = ((BuildAction) action).Building;
-            switch (building)
+            case ActionCode.BUILD_BREWERY:
             {
-                case Content.Brewery:
+                // TODO update resources
+                if (PlayerResource.Beer >= ResourceHandler.BreweryBeerCost)
                 {
-                    // TODO update resources
-                    if (PlayerResource.Beer >= ResourceHandler.BreweryBeerCost)
-                    {
-                            // TODO delay
-                        PlayerResource.Beer -= ResourceHandler.BreweryBeerCost;
-                        PlayerResource.Breweries += 1;
-                        Grid[origin.x, origin.y].Content = ContentHandler[building];
-                        // TODO update other controllers
-                    }
-                    //TODO clarify inform user
-
-                    break;
+                    Grid[pos.x, pos.y].Content = ContentHandler[Content.Brewery];
+                    // TODO delay
+                    PlayerResource.Beer -= ResourceHandler.BreweryBeerCost;
+                    PlayerResource.Breweries += 1;
+                    // TODO update other controllers
                 }
-            }
-        }
-        else if (actionType == typeof(DeliveryAction))
-        {
-            if (PlayerResource.Beer >= ResourceHandler.VillageBeerCost)
-            {
-                // TODO delay
-                var targetPos = ((DeliveryAction) action).Origin;
-                PlayerResource.Beer -= ResourceHandler.VillageBeerCost;
-                //todo handle correct player
-                Occupy(Player, targetPos.x, targetPos.y, 1);
-                // TODO update other controllers
-            }
-        }
 
-        //todo handling
+                //TODO clarify inform user
+                break;
+            }
+
+            case ActionCode.DELIVERY:
+            {
+                if (PlayerResource.Beer >= ResourceHandler.VillageBeerCost)
+                {
+                    // TODO delay
+                    PlayerResource.Beer -= ResourceHandler.VillageBeerCost;
+                    //todo handle correct player
+                    Occupy(statePlayer, pos.x, pos.y);
+                    // TODO update other controllers
+                }
+                break;
+            }
+        }
     }
 }
