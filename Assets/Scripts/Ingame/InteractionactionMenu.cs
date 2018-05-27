@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.Ingame.Contents;
 using System.Collections.Generic;
+using Assets.Scripts.Ingame;
 using Assets.Scripts.Network;
 using UnityEngine;
 
@@ -81,6 +82,10 @@ public class InteractionactionMenu : MonoBehaviour {
         }));
     }
 
+    /// <summary>
+    /// Shows or hides interaction-menu for current cell
+    /// </summary>
+    /// <param name="origin">origin cell</param>
     public void Use(HexCell origin)
     {
         if (!_backgroundRenderer.enabled && _interactions.ContainsKey(origin.Content))

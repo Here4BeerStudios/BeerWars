@@ -25,6 +25,9 @@ public class HexGrid : MonoBehaviour
         get { return _cells[y, x]; }
     }
 
+    /// <summary>
+    /// Initializes the Grid
+    /// </summary>
     public void Init()
     {
         for (int y = 0, i = 0; y < Height; y++)

@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Network
+﻿namespace Assets.Scripts.Ingame
 {
     public enum ActionCode
     {

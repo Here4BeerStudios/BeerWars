@@ -31,7 +31,7 @@ public class ContentHandler : MonoBehaviour
     {
         _contents.Add(content, new CellContent(content, sprite));
     }
-
+    
     public CellContent this[Content content]
     {
         get { return _contents[content]; }

@@ -6,16 +6,19 @@ namespace Assets.Scripts.Network.Messages
     public struct InitPlayer
     {
         public uint NetId;
-        public Color Background;
-
         public string Name;
-        //public Sprite Emblem;
 
-        public InitPlayer(uint netId, Color background, string name)
+        //public Sprite Emblem;
+        public Color Background;
+        public Vector2Int SpawnPos;
+
+
+        public InitPlayer(uint netId, string name, Color background, Vector2Int spawnPos)
         {
             NetId = netId;
-            Background = background;
             Name = name;
+            Background = background;
+            SpawnPos = spawnPos;
         }
     }
 
@@ -36,8 +39,9 @@ namespace Assets.Scripts.Network.Messages
                 Players[i] = new InitPlayer()
                 {
                     NetId = reader.ReadPackedUInt32(),
-                    Background = reader.ReadColor(),
                     Name = reader.ReadString(),
+                    Background = reader.ReadColor(),
+                    SpawnPos = new Vector2Int(reader.ReadInt32(), reader.ReadInt32()),
                     //todo player emblem?
                 };
             }
@@ -50,8 +54,10 @@ namespace Assets.Scripts.Network.Messages
             foreach (var player in Players)
             {
                 writer.WritePackedUInt32(player.NetId);
-                writer.Write(player.Background);
                 writer.Write(player.Name);
+                writer.Write(player.Background);
+                writer.Write(player.SpawnPos.x);
+                writer.Write(player.SpawnPos.y);
                 //todo player emblem?
             }
         }

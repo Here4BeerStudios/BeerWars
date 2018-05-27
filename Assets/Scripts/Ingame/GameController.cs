@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Ingame.Contents;
+﻿using Assets.Scripts.Ingame;
+using Assets.Scripts.Ingame.Contents;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Messages;
 using UnityEngine;
@@ -11,7 +12,6 @@ public class GameController : MonoBehaviour
     public ContentHandler ContentHandler;
     public HexGrid Grid;
     public ResourceHandler PlayerResource;
-    public PlayerInfo PlayerInfo;
 
     public uint PlayerId;
     public PlayerInfo LocalPlayerInfo;
@@ -26,6 +26,7 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
+        //Setup client
         _netClient = new NetworkClient();
         _netClient.RegisterHandler(BwMsgTypes.Init, OnInit);
         _netClient.RegisterHandler(BwMsgTypes.Action, OnAction);
@@ -47,104 +48,35 @@ public class GameController : MonoBehaviour
         _netClient.Connect("127.0.0.1", 7777);
     }
 
-    private void Spawn(Player player, int x, int y)
-    {
-        int x1, x2;
-        if ((y & 1) == 0)
-        {
-            x1 = x - 1;
-            x2 = x;
-        }
-        else
-        {
-            x1 = x;
-            x2 = x + 1;
-        }
-
-        Grid[x1, y - 1].Owner = player;
-        Grid[x1, y - 1].Content = ContentHandler[Content.Water];
-        Grid[x2, y - 1].Owner = player;
-        Grid[x2, y - 1].Content = ContentHandler[Content.Normal];
-        Grid[x - 1, y].Owner = player;
-        Grid[x - 1, y].Content = ContentHandler[Content.Water];
-        Grid[x, y].Owner = player;
-        Grid[x, y].Content = ContentHandler[Content.Brewery];
-        Grid[x + 1, y].Owner = player;
-        Grid[x + 1, y].Content = ContentHandler[Content.Cornfield];
-        Grid[x1, y + 1].Owner = player;
-        Grid[x1, y + 1].Content = ContentHandler[Content.Normal];
-        Grid[x2, y + 1].Owner = player;
-        Grid[x2, y + 1].Content = ContentHandler[Content.Cornfield];
-
-        PlayerResource.CornFields = 2;
-        PlayerResource.WaterFields = 2;
-        PlayerResource.Breweries = 1;
-    }
-
-    private void Occupy(Player player, int x, int y)
-    {
-        int x1, x2;
-        if ((y & 1) == 0)
-        {
-            x1 = x - 1;
-            x2 = x;
-        }
-        else
-        {
-            x1 = x;
-            x2 = x + 1;
-        }
-
-        //todo check occupy level
-        var cells = new[]
-        {
-            Grid[x1, y - 1],
-            Grid[x2, y - 1],
-            Grid[x - 1, y],
-            Grid[x, y],
-            Grid[x + 1, y],
-            Grid[x1, y + 1],
-            Grid[x2, y + 1],
-        };
-
-        foreach (var cell in cells)
-        {
-            cell.Owner = player;
-            if (player == LocalPlayer)
-            {
-                if (cell.Content == Content.Cornfield)
-                {
-                    PlayerResource.CornFields += 1;
-                }
-                else if (cell.Content == Content.Water)
-                {
-                    PlayerResource.WaterFields += 1;
-                }
-            }
-        }
-    }
-
     private void OnInit(NetworkMessage netMsg)
     {
-        Debug.Log("Initialize Game");
         var msg = netMsg.ReadMessage<InitMessage>();
+        //init grid
+        //todo grid?
+        Grid.Init();
+
+        //init players
         PlayerId = msg.OwnId;
         var initPlayers = msg.Players;
         _players = new Player[initPlayers.Length];
         for (int i = 0; i < initPlayers.Length; i++)
         {
             var initPlayer = initPlayers[i];
-            var info = Instantiate(PlayerInfo);
-            info.Name = initPlayer.Name;
             //todo check emblem
-            _players[i] = new Player(initPlayer.NetId, info, initPlayer.Background);
+            var player = new Player(initPlayer.NetId, initPlayer.Name, initPlayer.Background, initPlayer.SpawnPos);
+            _players[i] = player;
+            Spawn(player);
         }
+        
+        //center cam on spawn pos
+        var localPlayer = LocalPlayer;
+        var spx = localPlayer.SpawnPos.x;
+        var spy = localPlayer.SpawnPos.y;
+        var camPos = new Vector3((spx + spy * 0.5f - spy / 2) * (HexCell.InnerRadius * 2f),
+            spy * (HexCell.OuterRadius * 1.5f), -10f);
+        Camera.main.transform.localPosition = camPos;
 
-        //todo grid?
-
-
-        Grid.Init();
-        Spawn(LocalPlayer, 2, 2);
+        Debug.Log("Initialized Game");
     }
 
     private void OnAction(NetworkMessage netMsg)
@@ -172,6 +104,11 @@ public class GameController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sends an action to the server
+    /// </summary>
+    /// <param name="origin">Origin cell position</param>
+    /// <param name="code">Action Code</param>
     public void SendAction(Vector2Int origin, ActionCode code)
     {
         var msg = new ActionMessage
@@ -181,5 +118,88 @@ public class GameController : MonoBehaviour
             Code = code
         };
         _netClient.Send(BwMsgTypes.Action, msg);
+    }
+
+    private void Spawn(Player player)
+    {
+        var x = player.SpawnPos.x;
+        var y = player.SpawnPos.y;
+        int x1, x2;
+        if ((y & 1) == 0)
+        {
+            x1 = x - 1;
+            x2 = x;
+        }
+        else
+        {
+            x1 = x;
+            x2 = x + 1;
+        }
+
+        //update grid
+        Grid[x1, y - 1].Owner = player;
+        Grid[x1, y - 1].Content = ContentHandler[Content.Water];
+        Grid[x2, y - 1].Owner = player;
+        Grid[x2, y - 1].Content = ContentHandler[Content.Normal];
+        Grid[x - 1, y].Owner = player;
+        Grid[x - 1, y].Content = ContentHandler[Content.Water];
+        Grid[x, y].Owner = player;
+        Grid[x, y].Content = ContentHandler[Content.Brewery];
+        Grid[x + 1, y].Owner = player;
+        Grid[x + 1, y].Content = ContentHandler[Content.Cornfield];
+        Grid[x1, y + 1].Owner = player;
+        Grid[x1, y + 1].Content = ContentHandler[Content.Normal];
+        Grid[x2, y + 1].Owner = player;
+        Grid[x2, y + 1].Content = ContentHandler[Content.Cornfield];
+
+        //update resources
+        PlayerResource.CornFields = 2;
+        PlayerResource.WaterFields = 2;
+        PlayerResource.Breweries = 1;
+    }
+
+    private void Occupy(Player player, int x, int y)
+    {
+        int x1, x2;
+        if ((y & 1) == 0)
+        {
+            x1 = x - 1;
+            x2 = x;
+        }
+        else
+        {
+            x1 = x;
+            x2 = x + 1;
+        }
+
+        //define area of effect
+        //todo check occupy level
+        var cells = new[]
+        {
+            Grid[x1, y - 1],
+            Grid[x2, y - 1],
+            Grid[x - 1, y],
+            Grid[x, y],
+            Grid[x + 1, y],
+            Grid[x1, y + 1],
+            Grid[x2, y + 1],
+        };
+
+        //update area of effect
+        foreach (var cell in cells)
+        {
+            cell.Owner = player;
+            if (player == LocalPlayer)
+            {
+                if (cell.Content == Content.Cornfield)
+                {
+                    PlayerResource.CornFields += 1;
+                }
+                else if (cell.Content == Content.Water)
+                {
+                    PlayerResource.WaterFields += 1;
+                }
+            }
+        }
     }
 }

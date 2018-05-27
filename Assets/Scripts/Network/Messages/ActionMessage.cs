@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Ingame;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Assets.Scripts.Network.Messages
