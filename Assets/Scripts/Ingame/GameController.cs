@@ -1,36 +1,50 @@
-﻿using Assets.Scripts.Ingame.Actions;
-using Assets.Scripts.Ingame.Contents;
-using System.Collections.Generic;
+﻿using Assets.Scripts.Ingame.Contents;
+using Assets.Scripts.Network;
+using Assets.Scripts.Network.Messages;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
+using AddPlayerMessage = Assets.Scripts.Network.Messages.AddPlayerMessage;
 
 public class GameController : MonoBehaviour
 {
     public ContentHandler ContentHandler;
     public HexGrid Grid;
-    public Player Player;
     public ResourceHandler PlayerResource;
+    public PlayerInfo PlayerInfo;
 
+    public uint PlayerId;
+    public PlayerInfo LocalPlayerInfo;
+
+    private NetworkClient _netClient;
     private Player[] _players;
-    private Queue<State> _queue;
+
+    public Player LocalPlayer
+    {
+        get { return _players[PlayerId]; }
+    }
 
     void Awake()
     {
-        _players = new Player[10]; //todo check max players
-        _queue = new Queue<State>();
-    }
+        _netClient = new NetworkClient();
+        _netClient.RegisterHandler(BwMsgTypes.Init, OnInit);
+        _netClient.RegisterHandler(BwMsgTypes.Action, OnAction);
+        _netClient.RegisterHandler(MsgType.Connect, msg =>
+        {
+            Debug.Log("Connected to server");
 
-    public void RegisterState(State state)
-    {
-        _queue.Enqueue(state);
+            _netClient.Send(MsgType.AddPlayer, new AddPlayerMessage()
+            {
+                Name = LocalPlayerInfo.Name,
+            });
+
+            _netClient.Send(MsgType.Ready, new EmptyMessage());
+        });
     }
 
     void Start()
     {
-        Player.ID = 1;
-        _players[1] = Player;
-
-        Grid.Init();
-        Spawn(Player, 2, 2);
+        _netClient.Connect("127.0.0.1", 7777);
     }
 
     private void Spawn(Player player, int x, int y)
@@ -96,7 +110,7 @@ public class GameController : MonoBehaviour
         foreach (var cell in cells)
         {
             cell.Owner = player;
-            if (player == Player)
+            if (player == LocalPlayer)
             {
                 if (cell.Content == Content.Cornfield)
                 {
@@ -110,22 +124,37 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void Update()
+    private void OnInit(NetworkMessage netMsg)
     {
-        while (_queue.Count > 0)
+        Debug.Log("Initialize Game");
+        var msg = netMsg.ReadMessage<InitMessage>();
+        PlayerId = msg.OwnId;
+        var initPlayers = msg.Players;
+        _players = new Player[initPlayers.Length];
+        for (int i = 0; i < initPlayers.Length; i++)
         {
-            //TODO validate state?
-            HandleState(_queue.Dequeue());
+            var initPlayer = initPlayers[i];
+            var info = Instantiate(PlayerInfo);
+            info.Name = initPlayer.Name;
+            //todo check emblem
+            _players[i] = new Player(initPlayer.NetId, info, initPlayer.Background);
         }
+
+        //todo grid?
+
+
+        Grid.Init();
+        Spawn(LocalPlayer, 2, 2);
     }
 
-    private void HandleState(State state)
+    private void OnAction(NetworkMessage netMsg)
     {
-        var statePlayer = _players[state.PlayerId];
-        var pos = state.Origin;
-        switch (state.Code)
+        var msg = netMsg.ReadMessage<ActionMessage>();
+        var statePlayer = _players[msg.PlayerId];
+        var pos = msg.Origin;
+        switch (msg.Code)
         {
-            case ActionCode.BUILD_BREWERY:
+            case ActionCode.BuildBrewery:
             {
                 // TODO delay
                 Grid[pos.x, pos.y].Content = ContentHandler[Content.Brewery];
@@ -133,7 +162,7 @@ public class GameController : MonoBehaviour
                 break;
             }
 
-            case ActionCode.DELIVERY:
+            case ActionCode.Delivery:
             {
                 // TODO delay
                 Occupy(statePlayer, pos.x, pos.y);
@@ -141,5 +170,16 @@ public class GameController : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void SendAction(Vector2Int origin, ActionCode code)
+    {
+        var msg = new ActionMessage
+        {
+            PlayerId = PlayerId,
+            Origin = origin,
+            Code = code
+        };
+        _netClient.Send(BwMsgTypes.Action, msg);
     }
 }

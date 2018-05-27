@@ -1,7 +1,7 @@
 ﻿using System;
 using Assets.Scripts.Ingame.Contents;
-using Assets.Scripts.Ingame.Actions;
 using System.Collections.Generic;
+using Assets.Scripts.Network;
 using UnityEngine;
 
 struct InteractionGroup
@@ -37,14 +37,12 @@ public class InteractionactionMenu : MonoBehaviour {
     private Transform _background;
     private SpriteRenderer _backgroundRenderer;
     //private Dictionary<Content, Interaction> _interactions;
-    private Player _player;
     private ResourceHandler _resources;
     private Dictionary<Content, InteractionGroup> _interactions;
     private List<HexCell> _cells;
 
     void Start()
     {
-        _player = Controller.Player;
         _resources = Controller.PlayerResource;
         _background = transform.GetChild(0);
         _backgroundRenderer = _background.GetComponent<SpriteRenderer>();
@@ -57,15 +55,15 @@ public class InteractionactionMenu : MonoBehaviour {
     private void InitInteractions()
     {
         //build actions
-        _interactions.Add(Content.Normal, new InteractionGroup(cell => cell.Owner == _player, new []
+        _interactions.Add(Content.Normal, new InteractionGroup(cell => cell.Owner.NetId == Controller.PlayerId, new []
         {
             new ConcreteInteraction(ContentHandler[Content.Brewery], cell =>
             {
-                if (cell.Owner == _player && _resources.Beer >= ResourceHandler.BreweryBeerCost)
+                if (_resources.Beer >= ResourceHandler.BreweryBeerCost)
                 {
                     _resources.Beer -= ResourceHandler.BreweryBeerCost;
                     _resources.Breweries += 1;
-                    Controller.RegisterState(new State(_player.ID, cell.Pos, ActionCode.BUILD_BREWERY));
+                    Controller.SendAction(cell.Pos, ActionCode.BuildBrewery);
                 }
             }), 
         }));
@@ -77,7 +75,7 @@ public class InteractionactionMenu : MonoBehaviour {
                 if (_resources.Beer >= ResourceHandler.VillageBeerCost)
                 {
                     _resources.Beer -= ResourceHandler.VillageBeerCost;
-                    Controller.RegisterState(new State(_player.ID, cell.Pos, ActionCode.DELIVERY));
+                    Controller.SendAction(cell.Pos, ActionCode.Delivery);
                 }
             }), 
         }));
