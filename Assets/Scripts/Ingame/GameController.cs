@@ -12,7 +12,7 @@ public class GameController : MonoBehaviour
     public ResourceHandler PlayerResource;
 
     public uint PlayerId;
-    public NetHandler _netHandler;
+    private NetHandler _netHandler;
     private Player[] _players;
 
     public Player LocalPlayer
@@ -23,13 +23,17 @@ public class GameController : MonoBehaviour
     void Start()
     {
         _netHandler = NetHandler.Self;
-        _netHandler.RegisterHandler(BwMsgTypes.InitPlayers, OnInit);
-        _netHandler.RegisterHandler(BwMsgTypes.Action, OnAction);
+        if (_netHandler.Online)
+        {
+            _netHandler.RegisterHandler(BwMsgTypes.InitPlayers, OnInitPlayers);
+            _netHandler.RegisterHandler(BwMsgTypes.Action, OnAction);
+            _netHandler.LoadPlayers();
+        }
     }
 
-    private void OnInit(NetworkMessage netMsg)
+    private void OnInitPlayers(NetworkMessage netMsg)
     {
-        var msg = netMsg.ReadMessage<InitMessage>();
+        var msg = netMsg.ReadMessage<InitPlayersMessage>();
         //init grid
         //todo grid?
         Grid.Init();

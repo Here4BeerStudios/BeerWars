@@ -55,10 +55,14 @@ public class NetHandler
         });
     }
 
-    public void StartGame()
+    public void LoadScene()
     {
-        Debug.Log("Starting game");
-        _netClient.Send(MsgType.Ready, new EmptyMessage());
+        _netClient.Send(BwMsgTypes.LoadScene, new EmptyMessage());
+    }
+
+    public void LoadPlayers()
+    {
+        _netClient.Send(BwMsgTypes.LoadPlayers, new EmptyMessage());
     }
 
     public void SendAction(ActionMessage msg)

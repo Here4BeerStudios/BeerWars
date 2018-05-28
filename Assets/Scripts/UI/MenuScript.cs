@@ -1,4 +1,5 @@
-﻿using UnityEditor.Experimental.UIElements.GraphView;
+﻿using Assets.Scripts.Network;
+using UnityEditor.Experimental.UIElements.GraphView;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -119,6 +120,11 @@ public class MenuScript : MonoBehaviour
             Debug.Log("Connected to " + netHandler.IpAddress + " at port " + netHandler.Port);
             netHandler.Join();
         });
+        netHandler.RegisterHandler(BwMsgTypes.InitScene, msg =>
+        {
+            Debug.Log("Loading Scene");
+            SceneManager.LoadScene("Scene");
+        });
         netHandler.Config(NetIpAddress.text,int.Parse(NetPort.text));
     }
 
@@ -127,8 +133,7 @@ public class MenuScript : MonoBehaviour
         var netHandler = NetHandler.Self;
         if (netHandler.IsHost)
         {
-            SceneManager.LoadScene("Scene");
-            netHandler.StartGame();
+            netHandler.LoadScene();
         }
     }
 }
