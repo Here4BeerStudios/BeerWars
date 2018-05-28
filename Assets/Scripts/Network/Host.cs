@@ -5,21 +5,23 @@ using UnityEngine;
 using UnityEngine.Networking;
 using AddPlayerMessage = Assets.Scripts.Network.Messages.AddPlayerMessage;
 
-public class Host : MonoBehaviour
+public class Host
 {
-    private List<InitPlayer> _players;
+    private List<InitPlayers> _players;
     private Dictionary<NetworkConnection, uint> _netIds;
 
-    void Awake()
+    public Host(int port)
     {
         //Setup server
-        NetworkServer.Listen(7777);
+        NetworkServer.Listen(port);
         NetworkServer.RegisterHandler(MsgType.AddPlayer, OnAddPlayer);
         NetworkServer.RegisterHandler(MsgType.Ready, OnStartGame);
         NetworkServer.RegisterHandler(BwMsgTypes.Action, OnAction);
 
-        _players = new List<InitPlayer>();
+        _players = new List<InitPlayers>();
         _netIds = new Dictionary<NetworkConnection, uint>();
+
+        Debug.Log("Server created at port " + port);
     }
 
     private void OnAddPlayer(NetworkMessage netMsg)
@@ -27,7 +29,7 @@ public class Host : MonoBehaviour
         var msg = netMsg.ReadMessage<AddPlayerMessage>();
 
         var playerId = (uint) _players.Count;
-        var newPlayer = new InitPlayer(playerId, msg.Name, GetSpawnColor(), GetSpawnPos());
+        var newPlayer = new InitPlayers(playerId, msg.Name, GetSpawnColor(), GetSpawnPos());
 
         _netIds.Add(netMsg.conn, playerId);
         _players.Add(newPlayer);
@@ -50,10 +52,10 @@ public class Host : MonoBehaviour
         var playerArray = _players.ToArray();
         foreach (var entry in _netIds)
         {
-            entry.Key.Send(BwMsgTypes.Init, new InitMessage
+            entry.Key.Send(BwMsgTypes.InitPlayers, new InitMessage
             {
                 OwnId = entry.Value,
-                Players = playerArray,
+                Playerses = playerArray,
             });
         }
     }

@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 namespace Assets.Scripts.Network.Messages
 {
-    public struct InitPlayer
+    public struct InitPlayers
     {
         public uint NetId;
         public string Name;
@@ -13,7 +13,7 @@ namespace Assets.Scripts.Network.Messages
         public Vector2Int SpawnPos;
 
 
-        public InitPlayer(uint netId, string name, Color background, Vector2Int spawnPos)
+        public InitPlayers(uint netId, string name, Color background, Vector2Int spawnPos)
         {
             NetId = netId;
             Name = name;
@@ -26,17 +26,17 @@ namespace Assets.Scripts.Network.Messages
     {
         public uint OwnId;
 
-        public InitPlayer[] Players;
+        public InitPlayers[] Playerses;
         //todo grid instance?
 
         public override void Deserialize(NetworkReader reader)
         {
             OwnId = reader.ReadPackedUInt32();
             var len = reader.ReadInt32();
-            Players = new InitPlayer[len];
+            Playerses = new InitPlayers[len];
             for (var i = 0; i < len; i++)
             {
-                Players[i] = new InitPlayer()
+                Playerses[i] = new InitPlayers()
                 {
                     NetId = reader.ReadPackedUInt32(),
                     Name = reader.ReadString(),
@@ -50,8 +50,8 @@ namespace Assets.Scripts.Network.Messages
         public override void Serialize(NetworkWriter writer)
         {
             writer.WritePackedUInt32(OwnId);
-            writer.Write(Players.Length);
-            foreach (var player in Players)
+            writer.Write(Playerses.Length);
+            foreach (var player in Playerses)
             {
                 writer.WritePackedUInt32(player.NetId);
                 writer.Write(player.Name);

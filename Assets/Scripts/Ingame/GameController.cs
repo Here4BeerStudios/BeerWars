@@ -4,8 +4,6 @@ using Assets.Scripts.Network;
 using Assets.Scripts.Network.Messages;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
-using AddPlayerMessage = Assets.Scripts.Network.Messages.AddPlayerMessage;
 
 public class GameController : MonoBehaviour
 {
@@ -14,9 +12,7 @@ public class GameController : MonoBehaviour
     public ResourceHandler PlayerResource;
 
     public uint PlayerId;
-    public PlayerInfo LocalPlayerInfo;
-
-    private NetworkClient _netClient;
+    private NetHandler _netHandler;
     private Player[] _players;
 
     public Player LocalPlayer
@@ -24,28 +20,11 @@ public class GameController : MonoBehaviour
         get { return _players[PlayerId]; }
     }
 
-    void Awake()
-    {
-        //Setup client
-        _netClient = new NetworkClient();
-        _netClient.RegisterHandler(BwMsgTypes.Init, OnInit);
-        _netClient.RegisterHandler(BwMsgTypes.Action, OnAction);
-        _netClient.RegisterHandler(MsgType.Connect, msg =>
-        {
-            Debug.Log("Connected to server");
-
-            _netClient.Send(MsgType.AddPlayer, new AddPlayerMessage()
-            {
-                Name = LocalPlayerInfo.Name,
-            });
-
-            _netClient.Send(MsgType.Ready, new EmptyMessage());
-        });
-    }
-
     void Start()
     {
-        _netClient.Connect("127.0.0.1", 7777);
+        _netHandler = NetHandler.self;
+        _netHandler.RegisterHandler(BwMsgTypes.InitPlayers, OnInit);
+        _netHandler.RegisterHandler(BwMsgTypes.Action, OnAction);
     }
 
     private void OnInit(NetworkMessage netMsg)
@@ -57,7 +36,7 @@ public class GameController : MonoBehaviour
 
         //init players
         PlayerId = msg.OwnId;
-        var initPlayers = msg.Players;
+        var initPlayers = msg.Playerses;
         _players = new Player[initPlayers.Length];
         for (int i = 0; i < initPlayers.Length; i++)
         {
@@ -67,7 +46,7 @@ public class GameController : MonoBehaviour
             _players[i] = player;
             Spawn(player);
         }
-        
+
         //center cam on spawn pos
         var localPlayer = LocalPlayer;
         var spx = localPlayer.SpawnPos.x;
@@ -111,13 +90,12 @@ public class GameController : MonoBehaviour
     /// <param name="code">Action Code</param>
     public void SendAction(Vector2Int origin, ActionCode code)
     {
-        var msg = new ActionMessage
+        _netHandler.SendAction(new ActionMessage
         {
             PlayerId = PlayerId,
             Origin = origin,
             Code = code
-        };
-        _netClient.Send(BwMsgTypes.Action, msg);
+        });
     }
 
     private void Spawn(Player player)
