@@ -113,7 +113,7 @@ public class MenuScript : MonoBehaviour
     // Online mode menu
     public void OnNetInit()
     {
-        var netHandler = NetHandler.self;
+        var netHandler = NetHandler.Self;
         netHandler.RegisterHandler(MsgType.Connect, msg =>
         {
             Debug.Log("Connected to " + netHandler.IpAddress + " at port " + netHandler.Port);
@@ -124,11 +124,11 @@ public class MenuScript : MonoBehaviour
 
     public void OnNetStart()
     {
-        var netHandler = NetHandler.self;
+        var netHandler = NetHandler.Self;
         if (netHandler.IsHost)
         {
             SceneManager.LoadScene("Scene");
-            NetHandler.self.StartGame();
+            netHandler.StartGame();
         }
     }
 }

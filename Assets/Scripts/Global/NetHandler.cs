@@ -1,18 +1,23 @@
-﻿using System;
-using Assets.Scripts.Ingame;
-using Assets.Scripts.Network;
+﻿using Assets.Scripts.Network;
 using Assets.Scripts.Network.Messages;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
-using UnityEngine.SceneManagement;
 using AddPlayerMessage = Assets.Scripts.Network.Messages.AddPlayerMessage;
 
-public class NetHandler : MonoBehaviour
+public class NetHandler
 {
-    public static NetHandler self;
-
-    public PlayerInfo PlayerInfo;
+    private static NetHandler _self;
+    public static NetHandler Self
+    {
+        get
+        {
+            if (_self == null)
+                _self = new NetHandler();
+            return _self;
+        }
+    }
+    
     public string IpAddress { get; private set; }
     public int Port { get; private set; }
     public bool Online { get; private set; }
@@ -20,24 +25,11 @@ public class NetHandler : MonoBehaviour
     private NetworkClient _netClient;
     private Host _host;
 
-    void Awake()
+    private NetHandler()
     {
-        // We check if we have a player.
-        // If we already have a player - destroy the gameObject.
-        // Just some insurance if we somehow mess up stuff ;D
-        if (self == null)
-        {
-            DontDestroyOnLoad(gameObject);
-            self = this;
-            Online = false;
-            _netClient = new NetworkClient();
-        }
-        else if (self != this)
-        {
-            Destroy(gameObject);
-        }
+        Online = false;
+        _netClient = new NetworkClient();
     }
-    
 
     public void Config(string ipAddress, int port)
     {
@@ -59,7 +51,7 @@ public class NetHandler : MonoBehaviour
     {
         _netClient.Send(MsgType.AddPlayer, new AddPlayerMessage()
         {
-            Name = PlayerInfo.Name,
+            Name = LocalPlayerInfo.self.Name,
         });
     }
 
