@@ -7,11 +7,11 @@ using UnityEngine.Networking;
 
 public class GameController : MonoBehaviour
 {
-    public ContentHandler ContentHandler;
     public HexGrid Grid;
     public ResourceHandler PlayerResource;
-
     public uint PlayerId;
+
+    private ContentHandler _contents;
     private NetHandler _netHandler;
     private Player[] _players;
 
@@ -22,6 +22,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
+        _contents = ContentHandler.Self;
         _netHandler = NetHandler.Self;
         if (_netHandler.Online)
         {
@@ -72,7 +73,7 @@ public class GameController : MonoBehaviour
             case ActionCode.BuildBrewery:
             {
                 // TODO delay
-                Grid[pos.x, pos.y].Content = ContentHandler[Content.Brewery];
+                Grid[pos.x, pos.y].Content = _contents[Content.Brewery];
                 //TODO clarify inform user
                 break;
             }
@@ -120,19 +121,19 @@ public class GameController : MonoBehaviour
 
         //update grid
         Grid[x1, y - 1].Owner = player;
-        Grid[x1, y - 1].Content = ContentHandler[Content.Water];
+        Grid[x1, y - 1].Content = _contents[Content.Water];
         Grid[x2, y - 1].Owner = player;
-        Grid[x2, y - 1].Content = ContentHandler[Content.Normal];
+        Grid[x2, y - 1].Content = _contents[Content.Normal];
         Grid[x - 1, y].Owner = player;
-        Grid[x - 1, y].Content = ContentHandler[Content.Water];
+        Grid[x - 1, y].Content = _contents[Content.Water];
         Grid[x, y].Owner = player;
-        Grid[x, y].Content = ContentHandler[Content.Brewery];
+        Grid[x, y].Content = _contents[Content.Brewery];
         Grid[x + 1, y].Owner = player;
-        Grid[x + 1, y].Content = ContentHandler[Content.Cornfield];
+        Grid[x + 1, y].Content = _contents[Content.Cornfield];
         Grid[x1, y + 1].Owner = player;
-        Grid[x1, y + 1].Content = ContentHandler[Content.Normal];
+        Grid[x1, y + 1].Content = _contents[Content.Normal];
         Grid[x2, y + 1].Owner = player;
-        Grid[x2, y + 1].Content = ContentHandler[Content.Cornfield];
+        Grid[x2, y + 1].Content = _contents[Content.Cornfield];
 
         //update resources
         PlayerResource.CornFields = 2;

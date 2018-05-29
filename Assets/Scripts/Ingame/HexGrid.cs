@@ -1,23 +1,21 @@
 ﻿using Assets.Scripts.Ingame.Contents;
 using UnityEngine;
-using Random = System.Random;
 
 public class HexGrid : MonoBehaviour
 {
-    public ContentHandler ContentHandler;
     public InteractionactionMenu InteractionactionMenu;
     public HexCell HexCell;
 
     public int Width = 50;
     public int Height = 50;
 
+    private ContentHandler _contents;
     private HexCell[,] _cells;
-    private Random _rnd;
 
     void Awake()
     {
+        _contents = ContentHandler.Self;
         _cells = new HexCell[Height, Width];
-        _rnd = new Random();
     }
 
     public HexCell this[int x, int y]
@@ -34,8 +32,8 @@ public class HexGrid : MonoBehaviour
         {
             for (var x = 0; x < Width; x++)
             {
-                var r = _rnd.NextDouble();
-                var entry = ContentHandler[r < 0.2 ? Content.Village : r < 0.4 ? Content.Cornfield : r < 0.6 ? Content.Water : Content.Normal];
+                var r = Random.value;
+                var entry = _contents[r < 0.2 ? Content.Village : r < 0.4 ? Content.Cornfield : r < 0.6 ? Content.Water : Content.Normal];
                 CreateCell(x, y, i++, entry);
             }
         }

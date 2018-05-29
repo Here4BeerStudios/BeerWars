@@ -30,20 +30,20 @@ struct ConcreteInteraction
 }
 
 public class InteractionactionMenu : MonoBehaviour {
-    public ContentHandler ContentHandler;
     public GameController Controller;
     public HexCell HexCell;
-    
     public bool Visible {get; private set; }
+
+    private ContentHandler _contents;
     private Transform _background;
     private SpriteRenderer _backgroundRenderer;
-    //private Dictionary<Content, Interaction> _interactions;
     private ResourceHandler _resources;
     private Dictionary<Content, InteractionGroup> _interactions;
     private List<HexCell> _cells;
 
     void Start()
     {
+        _contents = ContentHandler.Self;
         _resources = Controller.PlayerResource;
         _background = transform.GetChild(0);
         _backgroundRenderer = _background.GetComponent<SpriteRenderer>();
@@ -58,7 +58,7 @@ public class InteractionactionMenu : MonoBehaviour {
         //build actions
         _interactions.Add(Content.Normal, new InteractionGroup(cell => cell.Owner.NetId == Controller.PlayerId, new []
         {
-            new ConcreteInteraction(ContentHandler[Content.Brewery], cell =>
+            new ConcreteInteraction(_contents[Content.Brewery], cell =>
             {
                 if (_resources.Beer >= ResourceHandler.BreweryBeerCost)
                 {
@@ -71,7 +71,7 @@ public class InteractionactionMenu : MonoBehaviour {
         //delivery action
         _interactions.Add(Content.Village, new InteractionGroup(cell => true, new []
         {
-            new ConcreteInteraction(ContentHandler[Content.Delivery], cell =>
+            new ConcreteInteraction(_contents[Content.Delivery], cell =>
             {
                 if (_resources.Beer >= ResourceHandler.VillageBeerCost)
                 {

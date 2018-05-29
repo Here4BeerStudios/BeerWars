@@ -2,11 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContentHandler : MonoBehaviour
+public class ContentHandler
 {
-    private Dictionary<Content, CellContent> _contents;
+    private static ContentHandler _self;
 
-	void Awake()
+    public static ContentHandler Self
+    {
+        get
+        {
+            if (_self == null)
+                _self = new ContentHandler();
+            return _self;
+        }
+    }
+
+    private readonly Dictionary<Content, CellContent> _contents;
+
+	private ContentHandler()
     {
         _contents = new Dictionary<Content, CellContent>();
         //Load content
