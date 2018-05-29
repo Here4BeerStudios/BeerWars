@@ -6,8 +6,8 @@ public class HexGrid : MonoBehaviour
     public InteractionactionMenu InteractionactionMenu;
     public HexCell HexCell;
 
-    public int Width = 50;
-    public int Height = 50;
+    public int Width;
+    public int Height;
 
     private ContentHandler _contents;
     private HexCell[,] _cells;
@@ -28,18 +28,34 @@ public class HexGrid : MonoBehaviour
     /// </summary>
     public void Init()
     {
-        for (int y = 0, i = 0; y < Height; y++)
+        for (var y = 0; y < Height; y++)
         {
             for (var x = 0; x < Width; x++)
             {
                 var r = Random.value;
                 var entry = _contents[r < 0.2 ? Content.Village : r < 0.4 ? Content.Cornfield : r < 0.6 ? Content.Water : Content.Normal];
-                CreateCell(x, y, i++, entry);
+                CreateCell(x, y, entry);
             }
         }
     }
 
-    private void CreateCell(int x, int y, int i, CellContent content)
+
+    public void Load(Content[,] data)
+    {
+        Height = data.GetLength(0);
+        Width = data.GetLength(1);
+
+        for (var y = 0; y < Height; y++)
+        {
+            for (var x = 0; x < Width; x++)
+            {
+                var entry = _contents[data[y, x]];
+                CreateCell(x, y, entry);
+            }
+        }
+    }
+
+    private void CreateCell(int x, int y, CellContent content)
     {
         var position = new Vector3((x + y * 0.5f - y / 2) * (HexCell.InnerRadius * 2f),
             y * (HexCell.OuterRadius * 1.5f), 0f);

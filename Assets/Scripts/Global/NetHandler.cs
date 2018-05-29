@@ -60,6 +60,15 @@ public class NetHandler
         _netClient.Send(BwMsgTypes.LoadScene, new EmptyMessage());
     }
 
+    public void LoadGrid(int width, int height)
+    {
+        _netClient.Send(BwMsgTypes.LoadGrid, new LoadGridMessage
+        {
+            Height = height,
+            Width = width
+        });
+    }
+
     public void LoadPlayers()
     {
         _netClient.Send(BwMsgTypes.LoadPlayers, new EmptyMessage());

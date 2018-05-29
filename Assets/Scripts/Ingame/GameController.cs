@@ -26,18 +26,24 @@ public class GameController : MonoBehaviour
         _netHandler = NetHandler.Self;
         if (_netHandler.Online)
         {
+            _netHandler.RegisterHandler(BwMsgTypes.InitGrid, OnInitGrid);
             _netHandler.RegisterHandler(BwMsgTypes.InitPlayers, OnInitPlayers);
             _netHandler.RegisterHandler(BwMsgTypes.Action, OnAction);
-            _netHandler.LoadPlayers();
+            _netHandler.LoadGrid(50, 50);
         }
+    }
+
+    private void OnInitGrid(NetworkMessage netMsg)
+    {
+        var msg = netMsg.ReadMessage<InitGridMessage>();
+        Grid.Load(msg.Grid);
+        Debug.Log("Initialized grid");
+        _netHandler.LoadPlayers();
     }
 
     private void OnInitPlayers(NetworkMessage netMsg)
     {
         var msg = netMsg.ReadMessage<InitPlayersMessage>();
-        //init grid
-        //todo grid?
-        Grid.Init();
 
         //init players
         PlayerId = msg.OwnId;
@@ -60,7 +66,7 @@ public class GameController : MonoBehaviour
             spy * (HexCell.OuterRadius * 1.5f), -10f);
         Camera.main.transform.localPosition = camPos;
 
-        Debug.Log("Initialized Game");
+        Debug.Log("Initialized Players");
     }
 
     private void OnAction(NetworkMessage netMsg)
