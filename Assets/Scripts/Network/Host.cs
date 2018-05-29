@@ -12,6 +12,8 @@ public class Host
     private List<InitPlayer> _players;
     private Dictionary<NetworkConnection, uint> _netIds;
 
+    private int _gridWidth, _gridHeight;
+
     public Host(int port)
     {
         //Setup server
@@ -33,22 +35,10 @@ public class Host
         var msg = netMsg.ReadMessage<AddPlayerMessage>();
 
         var playerId = (uint) _players.Count;
-        var newPlayer = new InitPlayer(playerId, msg.Name, GetSpawnColor(), GetSpawnPos());
+        var newPlayer = new InitPlayer(playerId, msg.Name, Random.ColorHSV(0, 1, 0, 1, 0, 1), Vector2Int.zero);
 
         _netIds.Add(netMsg.conn, playerId);
         _players.Add(newPlayer);
-    }
-
-    private Color GetSpawnColor()
-    {
-        return Random.ColorHSV(0, 1, 0, 1, 0, 1);
-    }
-
-    private Vector2Int GetSpawnPos()
-    {
-        var x = Random.Range(1, 99);
-        var y = Random.Range(1, 99);
-        return new Vector2Int(x, y);
     }
 
     private void OnLoadScene(NetworkMessage netMsg)
@@ -59,12 +49,14 @@ public class Host
     private void OnLoadGrid(NetworkMessage netMsg)
     {
         var msg = netMsg.ReadMessage<LoadGridMessage>();
-        var width = msg.Width;
-        var height = msg.Height;
-        var data = new Content[height, width];
-        for (var y = 0; y < height; y++)
+        _gridWidth = msg.Width;
+        _gridHeight = msg.Height;
+
+        // Create random grid
+        var data = new Content[_gridHeight, _gridWidth];
+        for (var y = 0; y < _gridHeight; y++)
         {
-            for (var x = 0; x < width; x++)
+            for (var x = 0; x < _gridWidth; x++)
             {
                 var r = Random.value;
                 var entry = r < 0.2 ? Content.Village :
@@ -73,6 +65,13 @@ public class Host
                 data[y, x] = entry;
             }
         }
+
+        // Set spawn position
+        foreach (var player in _players)
+        {
+            player.SpawnPos = GetSpawnPos();
+        }
+
         NetworkServer.SendToAll(BwMsgTypes.InitGrid, new InitGridMessage { Grid = data });
     }
 
@@ -92,5 +91,12 @@ public class Host
     private void OnAction(NetworkMessage netMsg)
     {
         NetworkServer.SendToAll(BwMsgTypes.Action, netMsg.ReadMessage<ActionMessage>());
+    }
+
+    private Vector2Int GetSpawnPos()
+    {
+        var x = Random.Range(1, _gridWidth - 1);
+        var y = Random.Range(1, _gridHeight - 1);
+        return new Vector2Int(x, y);
     }
 }

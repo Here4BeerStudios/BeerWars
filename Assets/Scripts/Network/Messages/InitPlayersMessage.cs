@@ -3,7 +3,7 @@ using UnityEngine.Networking;
 
 namespace Assets.Scripts.Network.Messages
 {
-    public struct InitPlayer
+    public class InitPlayer
     {
         public uint NetId;
         public string Name;
@@ -11,8 +11,7 @@ namespace Assets.Scripts.Network.Messages
         //public Sprite Emblem;
         public Color Background;
         public Vector2Int SpawnPos;
-
-
+        
         public InitPlayer(uint netId, string name, Color background, Vector2Int spawnPos)
         {
             NetId = netId;
@@ -35,14 +34,12 @@ namespace Assets.Scripts.Network.Messages
             Playerses = new InitPlayer[len];
             for (var i = 0; i < len; i++)
             {
-                Playerses[i] = new InitPlayer()
-                {
-                    NetId = reader.ReadPackedUInt32(),
-                    Name = reader.ReadString(),
-                    Background = reader.ReadColor(),
-                    SpawnPos = new Vector2Int(reader.ReadInt32(), reader.ReadInt32()),
+                var netId = reader.ReadPackedUInt32();
+                var name = reader.ReadString();
                     //todo player emblem?
-                };
+                var background = reader.ReadColor();
+                var spawnPos = new Vector2Int(reader.ReadInt32(), reader.ReadInt32());
+                Playerses[i] = new InitPlayer(netId, name, background, spawnPos);
             }
         }
 
