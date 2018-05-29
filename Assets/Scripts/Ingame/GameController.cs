@@ -26,10 +26,22 @@ public class GameController : MonoBehaviour
         _netHandler = NetHandler.Self;
         if (_netHandler.Online)
         {
+            // multiplayer
             _netHandler.RegisterHandler(BwMsgTypes.InitGrid, OnInitGrid);
             _netHandler.RegisterHandler(BwMsgTypes.InitPlayers, OnInitPlayers);
             _netHandler.RegisterHandler(BwMsgTypes.Action, OnAction);
             _netHandler.LoadGrid(50, 50);
+        }
+        else
+        {
+            //singleplayer
+            _players = new[]
+            {
+                new Player(0, LocalPlayerInfo.self.Name, Color.green, new Vector2Int(2, 2)),
+                //todo bots?
+            };
+            Grid.Init();
+            Spawn(LocalPlayer);
         }
     }
 
@@ -49,7 +61,7 @@ public class GameController : MonoBehaviour
         PlayerId = msg.OwnId;
         var initPlayers = msg.Playerses;
         _players = new Player[initPlayers.Length];
-        for (int i = 0; i < initPlayers.Length; i++)
+        for (var i = 0; i < initPlayers.Length; i++)
         {
             var initPlayer = initPlayers[i];
             //todo check emblem
@@ -72,9 +84,35 @@ public class GameController : MonoBehaviour
     private void OnAction(NetworkMessage netMsg)
     {
         var msg = netMsg.ReadMessage<ActionMessage>();
-        var statePlayer = _players[msg.PlayerId];
-        var pos = msg.Origin;
-        switch (msg.Code)
+        HandleAction(_players[msg.PlayerId], msg.Origin, msg.Code);
+    }
+
+    /// <summary>
+    /// Sends an action to the server
+    /// </summary>
+    /// <param name="origin">Origin cell position</param>
+    /// <param name="code">Action Code</param>
+    public void SendAction(Vector2Int origin, ActionCode code)
+    {
+        if (_netHandler.Online)
+        {
+            _netHandler.SendAction(new ActionMessage
+            {
+                PlayerId = PlayerId,
+                Origin = origin,
+                Code = code
+            });
+        }
+        else
+        {
+            HandleAction(LocalPlayer, origin, code);
+            //todo bot actions?
+        }
+    }
+
+    private void HandleAction(Player player, Vector2Int pos, ActionCode code)
+    {
+        switch (code)
         {
             case ActionCode.BuildBrewery:
             {
@@ -87,26 +125,11 @@ public class GameController : MonoBehaviour
             case ActionCode.Delivery:
             {
                 // TODO delay
-                Occupy(statePlayer, pos.x, pos.y);
+                Occupy(player, pos.x, pos.y);
                 // TODO update other controllers
                 break;
             }
         }
-    }
-
-    /// <summary>
-    /// Sends an action to the server
-    /// </summary>
-    /// <param name="origin">Origin cell position</param>
-    /// <param name="code">Action Code</param>
-    public void SendAction(Vector2Int origin, ActionCode code)
-    {
-        _netHandler.SendAction(new ActionMessage
-        {
-            PlayerId = PlayerId,
-            Origin = origin,
-            Code = code
-        });
     }
 
     private void Spawn(Player player)
