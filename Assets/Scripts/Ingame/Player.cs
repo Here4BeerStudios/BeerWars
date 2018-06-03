@@ -1,20 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Player : MonoBehaviour {
-	public PlayerInfo PlayerInfo;
-	public int cornCount;
-	public int beerCount;
+public class Player {
+    public uint NetId;
+	public string Name;
+    //public Sprite Emblem;
+    public Color Background;
+	public Vector2Int SpawnPos;
 
-	// Use this for initialization
-	void Start () {
-		cornCount = 0;
-		beerCount = 0;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Player(uint netId, string name, Color background, Vector2Int spawnPos)
+    {
+        NetId = netId;
+        Name = name;
+        Background = background;
+        SpawnPos = spawnPos;
+    }
 }

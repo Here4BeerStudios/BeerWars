@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerInfo : MonoBehaviour {
-	public string Name = "Undefined";
+	public string Name;
     // Lets start with a single sprite because it's easier to save.
-	public Sprite Emblem = null;
+	public Sprite Emblem;
 }
