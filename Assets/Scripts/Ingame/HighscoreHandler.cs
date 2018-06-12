@@ -46,7 +46,7 @@ public class HighscoreHandler : MonoBehaviour {
 	public void UpdateUI() {
 		for(int i = 0; i < topId.Length; i++) {
 			// Set Emblem
-			//UIElements[i].GetComponentInChildren<Image>().sprite
+			UIElements[i].GetComponentInChildren<Image>().sprite = players[topId[i]].Emblem;
 
 			Text[] texts = UIElements[i].GetComponentsInChildren<Text>();
 			// Set Name

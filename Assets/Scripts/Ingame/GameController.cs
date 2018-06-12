@@ -38,7 +38,7 @@ public class GameController : MonoBehaviour
             //singleplayer
             _players = new[]
             {
-                new Player(0, LocalPlayerInfo.self.Name, Color.green, new Vector2Int(2, 2)),
+				new Player(0, LocalPlayerInfo.self.Name, LocalPlayerInfo.self.Emblem, Color.green, new Vector2Int(2, 2)),
 				//todo bots?
             };
             Grid.Init();
@@ -66,8 +66,7 @@ public class GameController : MonoBehaviour
         for (var i = 0; i < initPlayers.Length; i++)
         {
             var initPlayer = initPlayers[i];
-            //todo check emblem
-            var player = new Player(initPlayer.NetId, initPlayer.Name, initPlayer.Background, initPlayer.SpawnPos);
+            var player = new Player(initPlayer.NetId, initPlayer.Name, initPlayer.Emblem, initPlayer.Background, initPlayer.SpawnPos);
             _players[i] = player;
             Spawn(player);
         }

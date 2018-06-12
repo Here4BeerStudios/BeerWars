@@ -8,14 +8,15 @@ namespace Assets.Scripts.Network.Messages
         public uint NetId;
         public string Name;
 
-        //public Sprite Emblem;
+        public string Emblem;
         public Color Background;
         public Vector2Int SpawnPos;
         
-        public InitPlayer(uint netId, string name, Color background, Vector2Int spawnPos)
+        public InitPlayer(uint netId, string name, string emblem, Color background, Vector2Int spawnPos)
         {
             NetId = netId;
             Name = name;
+			Emblem = emblem;
             Background = background;
             SpawnPos = spawnPos;
         }
@@ -36,10 +37,10 @@ namespace Assets.Scripts.Network.Messages
             {
                 var netId = reader.ReadPackedUInt32();
                 var name = reader.ReadString();
-                    //todo player emblem?
+				var emblem = reader.ReadString();
                 var background = reader.ReadColor();
                 var spawnPos = new Vector2Int(reader.ReadInt32(), reader.ReadInt32());
-                Playerses[i] = new InitPlayer(netId, name, background, spawnPos);
+                Playerses[i] = new InitPlayer(netId, name, emblem, background, spawnPos);
             }
         }
 
@@ -51,10 +52,10 @@ namespace Assets.Scripts.Network.Messages
             {
                 writer.WritePackedUInt32(player.NetId);
                 writer.Write(player.Name);
+				writer.Write(player.Emblem);
                 writer.Write(player.Background);
                 writer.Write(player.SpawnPos.x);
                 writer.Write(player.SpawnPos.y);
-                //todo player emblem?
             }
         }
     }
