@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Ingame;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Ingame;
 using Assets.Scripts.Ingame.Contents;
 using Assets.Scripts.Network;
 using Assets.Scripts.Network.Messages;
@@ -194,8 +195,7 @@ public class GameController : MonoBehaviour
             x2 = x + 1;
         }
 
-        //define area of effect
-        //todo check occupy level
+        //update occupy radius
         if (Grid[x, y].Owner != player)
         {
             // new owner
@@ -207,17 +207,36 @@ public class GameController : MonoBehaviour
             Grid.OccupyRadius[pos] += 1;
         }
         var radius = Grid.OccupyRadius[pos];
-        Debug.Log("Ocuupy radius = " + radius);
-        var cells = new[]
+
+        //define area of effect
+        var dirs = new[,]
         {
-            Grid[x1, y - 1],
-            Grid[x2, y - 1],
-            Grid[x - 1, y],
-            Grid[x, y],
-            Grid[x + 1, y],
-            Grid[x1, y + 1],
-            Grid[x2, y + 1],
+            {-1, -1},
+            {-1, 0},
+            {-1, 1},
+            {1, 1},
+            {1, 0},
+            {1, -1},
         };
+        var cells = new List<HexCell>();
+        if (radius == 1) cells.Add(Grid[x, y]);
+        var rx = x + radius;
+        var ry = y;
+        for (var i = 0; i < 6; i++)
+        {
+            for (var r = 0; r < radius; r++)
+            {
+                rx += dirs[i, 0];
+                ry += dirs[i, 1];
+                if ((ry & 1) == 0 && (i == 0 || i == 2))
+                        rx += 1;
+                else if ((ry & 1) == 1 && (i == 3 || i == 5))
+                        rx -= 1;
+
+                if (rx >= 0 && rx < Grid.Width && ry >= 0 && ry < Grid.Height)
+                    cells.Add(Grid[rx, ry]);
+            }
+        }
 
         //update area of effect
 		int points = 0;
@@ -241,6 +260,6 @@ public class GameController : MonoBehaviour
 			}
         }
 
-		HighscoreHandler.IncScore (player, cells.Length);
+		HighscoreHandler.IncScore (player, cells.Count);
     }
 }
