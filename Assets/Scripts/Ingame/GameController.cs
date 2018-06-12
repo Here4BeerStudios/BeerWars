@@ -39,12 +39,12 @@ public class GameController : MonoBehaviour
             _players = new[]
             {
                 new Player(0, LocalPlayerInfo.self.Name, Color.green, new Vector2Int(2, 2)),
-                //todo bots?
+				//todo bots?
             };
             Grid.Init();
-            Spawn(LocalPlayer);
+			Spawn(LocalPlayer);
+			HighscoreHandler.InitPlayerScore (_players);
         }
-		HighscoreHandler.InitPlayerScore (_players);
     }
 
     private void OnInitGrid(NetworkMessage netMsg)
@@ -79,6 +79,8 @@ public class GameController : MonoBehaviour
         var camPos = new Vector3((spx + spy * 0.5f - spy / 2) * (HexCell.InnerRadius * 2f),
             spy * (HexCell.OuterRadius * 1.5f), -10f);
         Camera.main.transform.localPosition = camPos;
+
+		HighscoreHandler.InitPlayerScore (_players);
 
         Debug.Log("Initialized Players");
     }
