@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     public HexGrid Grid;
     public ResourceHandler PlayerResource;
 	public HighscoreHandler HighscoreHandler;
+	public UserNav UserNav;
     public uint PlayerId;
 
     private ContentHandler _contents;
@@ -38,11 +39,13 @@ public class GameController : MonoBehaviour
             //singleplayer
             _players = new[]
             {
-                new Player(0, LocalPlayerInfo.self.Name, Color.green, new Vector2Int(2, 2)),
+				new Player(0, LocalPlayerInfo.self.Name, LocalPlayerInfo.self.Emblem, Color.green, new Vector2Int(2, 2)),
 				//todo bots?
             };
             Grid.Init();
 			Spawn(LocalPlayer);
+			UserNav.maxX = Grid.Width * HexCell.InnerRadius * 2f;
+			UserNav.maxY = Grid.Height * HexCell.OuterRadius * 1.5f;
 			HighscoreHandler.InitPlayerScore (_players);
         }
     }
@@ -50,7 +53,9 @@ public class GameController : MonoBehaviour
     private void OnInitGrid(NetworkMessage netMsg)
     {
         var msg = netMsg.ReadMessage<InitGridMessage>();
-        Grid.Load(msg.Grid);
+		Grid.Load(msg.Grid);
+		UserNav.maxX = Grid.Width * HexCell.InnerRadius * 2f;
+		UserNav.maxY = Grid.Height * HexCell.OuterRadius * 1.5f;
         Debug.Log("Initialized grid");
         _netHandler.LoadPlayers();
     }
@@ -66,8 +71,7 @@ public class GameController : MonoBehaviour
         for (var i = 0; i < initPlayers.Length; i++)
         {
             var initPlayer = initPlayers[i];
-            //todo check emblem
-            var player = new Player(initPlayer.NetId, initPlayer.Name, initPlayer.Background, initPlayer.SpawnPos);
+            var player = new Player(initPlayer.NetId, initPlayer.Name, initPlayer.Emblem, initPlayer.Background, initPlayer.SpawnPos);
             _players[i] = player;
             Spawn(player);
         }

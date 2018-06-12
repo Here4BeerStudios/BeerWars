@@ -8,6 +8,9 @@ public class UserNav : MonoBehaviour
     public float xSensitivity = 0.2f;
     public float ySensitivity = 0.2f;
 
+	public float maxX = 10;
+	public float maxY = 10;
+
     private Camera _cam;
 
     void Awake()
@@ -25,19 +28,23 @@ public class UserNav : MonoBehaviour
         var t = _cam.transform.localPosition;
         if (m.x >= Screen.width - 1 || Input.GetKey(KeyCode.D))
         {
-            t.x += xSensitivity;
+			if(t.x < maxX)
+            	t.x += xSensitivity;
         }
         else if (m.x <= 0 || Input.GetKey(KeyCode.A))
-        {
+		{
+			if(t.x > 0)
             t.x -= xSensitivity;
         }
         if (m.y >= Screen.height - 1 || Input.GetKey(KeyCode.W))
         {
-            t.y += ySensitivity;
+			if(t.y < maxY)
+            	t.y += ySensitivity;
         }
         else if (m.y <= 0 || Input.GetKey(KeyCode.S))
         {
-            t.y -= ySensitivity;
+			if(t.y > 0)
+            	t.y -= ySensitivity;
         }
         _cam.transform.localPosition = t;
     }

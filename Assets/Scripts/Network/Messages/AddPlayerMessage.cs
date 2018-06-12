@@ -6,18 +6,18 @@ namespace Assets.Scripts.Network.Messages
     public class AddPlayerMessage : MessageBase
     {
         public string Name;
-        //public Sprite Emblem;
+        public string Emblem;
 
         public override void Deserialize(NetworkReader reader)
         {
-            Name = reader.ReadString();
-            //todo player emblem?
+			Name = reader.ReadString();
+			Emblem = reader.ReadString();
         }
 
         public override void Serialize(NetworkWriter writer)
         {
-                writer.Write(Name);
-                //todo player emblem?
+            writer.Write(Name);
+			writer.Write(Emblem);
         }
     }
 }
