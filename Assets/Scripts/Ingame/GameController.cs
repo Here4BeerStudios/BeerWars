@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     public HexGrid Grid;
     public ResourceHandler PlayerResource;
 	public HighscoreHandler HighscoreHandler;
+	public UserNav UserNav;
     public uint PlayerId;
 
     private ContentHandler _contents;
@@ -43,6 +44,8 @@ public class GameController : MonoBehaviour
             };
             Grid.Init();
 			Spawn(LocalPlayer);
+			UserNav.maxX = Grid.Width * HexCell.InnerRadius * 2f;
+			UserNav.maxY = Grid.Height * HexCell.OuterRadius * 1.5f;
 			HighscoreHandler.InitPlayerScore (_players);
         }
     }
@@ -50,7 +53,9 @@ public class GameController : MonoBehaviour
     private void OnInitGrid(NetworkMessage netMsg)
     {
         var msg = netMsg.ReadMessage<InitGridMessage>();
-        Grid.Load(msg.Grid);
+		Grid.Load(msg.Grid);
+		UserNav.maxX = Grid.Width * HexCell.InnerRadius * 2f;
+		UserNav.maxY = Grid.Height * HexCell.OuterRadius * 1.5f;
         Debug.Log("Initialized grid");
         _netHandler.LoadPlayers();
     }
