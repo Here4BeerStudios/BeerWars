@@ -23,19 +23,19 @@ public class UserNav : MonoBehaviour
         //moving
         var m = Input.mousePosition;
         var t = _cam.transform.localPosition;
-        if (m.x >= Screen.width)
+        if (m.x >= Screen.width - 1 || Input.GetKey(KeyCode.D))
         {
             t.x += xSensitivity;
         }
-        else if (m.x <= 0)
+        else if (m.x <= 0 || Input.GetKey(KeyCode.A))
         {
             t.x -= xSensitivity;
         }
-        if (m.y >= Screen.height)
+        if (m.y >= Screen.height - 1 || Input.GetKey(KeyCode.W))
         {
             t.y += ySensitivity;
         }
-        else if (m.y <= 0)
+        else if (m.y <= 0 || Input.GetKey(KeyCode.S))
         {
             t.y -= ySensitivity;
         }
