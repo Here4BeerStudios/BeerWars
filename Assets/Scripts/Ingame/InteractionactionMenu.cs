@@ -32,6 +32,8 @@ struct ConcreteInteraction
 public class InteractionactionMenu : MonoBehaviour {
     public GameController Controller;
     public HexCell HexCell;
+	public AudioSource brewerySound;
+	public AudioSource beerDeliverySound;
     public bool Visible {get; private set; }
 
     private ContentHandler _contents;
@@ -65,6 +67,7 @@ public class InteractionactionMenu : MonoBehaviour {
                     _resources.Beer -= ResourceHandler.BreweryBeerCost;
                     _resources.Breweries += 1;
                     Controller.SendAction(cell.Pos, ActionCode.BuildBrewery);
+					brewerySound.Play();
                 }
             }), 
         }));
@@ -77,6 +80,7 @@ public class InteractionactionMenu : MonoBehaviour {
                 {
                     _resources.Beer -= ResourceHandler.VillageBeerCost;
                     Controller.SendAction(cell.Pos, ActionCode.Delivery);
+					beerDeliverySound.Play();
                 }
             }), 
         }));

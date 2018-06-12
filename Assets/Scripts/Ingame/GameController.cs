@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
 {
     public HexGrid Grid;
     public ResourceHandler PlayerResource;
+	public HighscoreHandler HighscoreHandler;
     public uint PlayerId;
 
     private ContentHandler _contents;
@@ -43,6 +44,7 @@ public class GameController : MonoBehaviour
             Grid.Init();
             Spawn(LocalPlayer);
         }
+		HighscoreHandler.InitPlayerScore (_players);
     }
 
     private void OnInitGrid(NetworkMessage netMsg)
@@ -198,20 +200,27 @@ public class GameController : MonoBehaviour
         };
 
         //update area of effect
+		int points = 0;
         foreach (var cell in cells)
         {
-            cell.Owner = player;
-            if (player == LocalPlayer)
-            {
-                if (cell.Content == Content.Cornfield)
-                {
-                    PlayerResource.CornFields += 1;
-                }
-                else if (cell.Content == Content.Water)
-                {
-                    PlayerResource.WaterFields += 1;
-                }
-            }
+			if (cell.Owner != player) {
+				cell.Owner = player;
+
+	            if (player == LocalPlayer)
+	            {
+	                if (cell.Content == Content.Cornfield)
+	                {
+	                    PlayerResource.CornFields += 1;
+	                }
+	                else if (cell.Content == Content.Water)
+	                {
+	                    PlayerResource.WaterFields += 1;
+	                }
+				}
+				points++;
+			}
         }
+
+		HighscoreHandler.IncScore (player, cells.Length);
     }
 }
