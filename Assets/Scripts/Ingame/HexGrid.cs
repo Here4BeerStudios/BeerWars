@@ -1,5 +1,7 @@
-﻿using Assets.Scripts.Ingame.Contents;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Ingame.Contents;
 using UnityEngine;
+using UnityEngine.XR.WSA.Persistence;
 
 public class HexGrid : MonoBehaviour
 {
@@ -12,10 +14,13 @@ public class HexGrid : MonoBehaviour
     private ContentHandler _contents;
     private HexCell[,] _cells;
 
+    public Dictionary<Vector2Int, int> OccupyRadius;
+
     void Awake()
     {
         _contents = ContentHandler.Self;
         _cells = new HexCell[Height, Width];
+        OccupyRadius = new Dictionary<Vector2Int, int>();
     }
 
     public HexCell this[int x, int y]
@@ -64,10 +69,16 @@ public class HexGrid : MonoBehaviour
         cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
 
-        cell.Pos = new Vector2Int(x, y);
+        var pos = new Vector2Int(x, y);
+        cell.Pos = pos;
         cell.Content = content;
         cell.OnClick += () => InteractionactionMenu.Use(cell);
 
         _cells[y, x] = cell;
+
+        if (content == Content.Village)
+        {
+            OccupyRadius.Add(pos, 0);
+        }
     }
 }

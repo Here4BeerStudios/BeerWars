@@ -129,7 +129,7 @@ public class GameController : MonoBehaviour
             case ActionCode.Delivery:
             {
                 // TODO delay
-                Occupy(player, pos.x, pos.y);
+                Occupy(player, pos);
                 // TODO update other controllers
                 break;
             }
@@ -174,8 +174,10 @@ public class GameController : MonoBehaviour
         PlayerResource.Breweries = 1;
     }
 
-    private void Occupy(Player player, int x, int y)
+    private void Occupy(Player player, Vector2Int pos)
     {
+        var x = pos.x;
+        var y = pos.y;
         int x1, x2;
         if ((y & 1) == 0)
         {
@@ -190,6 +192,18 @@ public class GameController : MonoBehaviour
 
         //define area of effect
         //todo check occupy level
+        if (Grid[x, y].Owner != player)
+        {
+            // new owner
+            Grid.OccupyRadius[pos] = 1;
+        }
+        else
+        {
+            // stack occupy level
+            Grid.OccupyRadius[pos] += 1;
+        }
+        var radius = Grid.OccupyRadius[pos];
+        Debug.Log("Ocuupy radius = " + radius);
         var cells = new[]
         {
             Grid[x1, y - 1],
