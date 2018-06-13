@@ -13,7 +13,7 @@ public class ResourceHandler : MonoBehaviour
     public const float BeerCornCost = 1f;
     public const float BeerWaterCost = 1f;
     public const float BreweryBeerCost = 10f;
-    public const float VillageBeerCost = 50f;
+    public const float VillageBeerCost = 10f;
 
     public float Corn;
     public float Water;
