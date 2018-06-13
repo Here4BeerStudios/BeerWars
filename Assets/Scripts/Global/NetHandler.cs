@@ -29,18 +29,29 @@ public class NetHandler
     {
         Online = false;
         _netClient = new NetworkClient();
-    }
+	}
 
-    public void Config(string ipAddress, int port)
-    {
-        Online = true;
-        IpAddress = ipAddress;
-        Port = port;
-        if (ipAddress.Equals("127.0.0.1"))
-            _host = new Host(port);
+	public void Config(string ipAddress, int port)
+	{
+		Online = true;
+		IpAddress = ipAddress;
+		Port = port;
+		if (ipAddress.Equals("127.0.0.1"))
+			_host = new Host(port);
 
-        _netClient.Connect(IpAddress, Port);
-    }
+		_netClient.Connect(IpAddress, Port);
+	}
+
+	public void Config(string ipAddress, int port, bool isHost)
+	{
+		Online = true;
+		IpAddress = ipAddress;
+		Port = port;
+		if (isHost)
+			_host = new Host(port);
+
+		_netClient.Connect(IpAddress, Port);
+	}
 
     public bool IsHost
     {

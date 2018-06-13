@@ -20,8 +20,10 @@ public class MenuScript : MonoBehaviour
     public GameObject onlineMenu;
 
     public InputField text;
-    public InputField NetIpAddress;
-    public InputField NetPort;
+	public InputField NetIpAddress;
+	public Button hostGameButton;
+	public Button joinGameButton;
+	public Button startGameButton;
     public SpriteChooser chooser;
 
     public MenuState current;
@@ -110,13 +112,35 @@ public class MenuScript : MonoBehaviour
         SceneManager.LoadScene("Scene");
     }
 
-    // Online mode menu
-    public void OnNetInit()
+	// Online mode create server
+	public void OnNetInit()
+	{
+		var netHandler = NetHandler.Self;
+		netHandler.RegisterHandler(MsgType.Connect, msg =>
+			{
+				Debug.Log("Joined local server");
+				netHandler.Join();
+			});
+		netHandler.RegisterHandler(BwMsgTypes.InitScene, msg =>
+			{
+				Debug.Log("Loading Scene");
+				SceneManager.LoadScene("Scene");
+			});
+		netHandler.Config("127.0.0.1", 7777, true);
+
+		startGameButton.interactable = true;
+		hostGameButton.interactable = false;
+		joinGameButton.interactable = false;
+		NetIpAddress.enabled = false;
+	}
+
+    // Online mode join server
+    public void OnNetJoin()
     {
         var netHandler = NetHandler.Self;
         netHandler.RegisterHandler(MsgType.Connect, msg =>
         {
-            Debug.Log("Connected to " + netHandler.IpAddress + " at port " + netHandler.Port);
+            Debug.Log("Connected to " + netHandler.IpAddress + " at port 7777");
             netHandler.Join();
         });
         netHandler.RegisterHandler(BwMsgTypes.InitScene, msg =>
@@ -124,7 +148,12 @@ public class MenuScript : MonoBehaviour
             Debug.Log("Loading Scene");
             SceneManager.LoadScene("Scene");
         });
-        netHandler.Config(NetIpAddress.text,int.Parse(NetPort.text));
+        netHandler.Config(NetIpAddress.text, 7777, false);
+
+		startGameButton.interactable = false;
+		hostGameButton.interactable = false;
+		joinGameButton.interactable = false;
+		NetIpAddress.enabled = false;
     }
 
     public void OnNetStart()
