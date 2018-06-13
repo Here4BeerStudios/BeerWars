@@ -232,6 +232,8 @@ public class GameController : MonoBehaviour
         foreach (var cell in cells)
         {
 			if (cell.Owner != player) {
+				if (cell.Owner != null)
+					HighscoreHandler.DecScore (cell.Owner);
 				cell.Owner = player;
 
 	            if (player == LocalPlayer)

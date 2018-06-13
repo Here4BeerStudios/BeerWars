@@ -43,6 +43,25 @@ public class HighscoreHandler : MonoBehaviour {
 		UpdateUI ();
 	}
 
+	public void DecScore(Player player) {
+		int playerId = (int) player.NetId;
+		points [playerId]--;
+		// Check player already in highscore.
+		int i = 0;
+		while (i < topId.Length && topId [i] != playerId)
+			i++;
+		i--;
+		while (i >= 0 && points[topId[i]] < points[playerId]) {
+			if(i+1 < topId.Length)
+				topId [i+1] = topId [i];
+			topId [i] = playerId;
+			i--;
+		}
+
+		// We don't update because we decrease when another score increases.
+		//UpdateUI ();
+	}
+
 	public void UpdateUI() {
 		for(int i = 0; i < topId.Length; i++) {
 			// Set Emblem
