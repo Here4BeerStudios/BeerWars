@@ -58,7 +58,7 @@ public class InteractionactionMenu : MonoBehaviour {
     private void InitInteractions()
     {
         //build actions
-        _interactions.Add(Content.Normal, new InteractionGroup(cell =>  cell.Owner != null && cell.Owner.NetId == Controller.PlayerId, new []
+        _interactions.Add(Content.Normal, new InteractionGroup(cell => cell.Owner == Controller.LocalPlayer, new []
         {
             new ConcreteInteraction(_contents[Content.Brewery], cell =>
             {
@@ -72,7 +72,7 @@ public class InteractionactionMenu : MonoBehaviour {
             }), 
         }));
         //delivery action
-        _interactions.Add(Content.Village, new InteractionGroup(cell => true, new []
+        _interactions.Add(Content.Village, new InteractionGroup(cell => cell.Owner == null || cell.Owner == Controller.LocalPlayer, new []
         {
             new ConcreteInteraction(_contents[Content.Delivery], cell =>
             {
