@@ -249,6 +249,6 @@ public class GameController : MonoBehaviour
 			}
         }
 
-		HighscoreHandler.IncScore (player, cells.Count);
+		HighscoreHandler.IncScore (player, points);
     }
 }
