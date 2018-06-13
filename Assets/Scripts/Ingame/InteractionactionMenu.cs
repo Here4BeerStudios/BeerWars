@@ -76,7 +76,7 @@ public class InteractionactionMenu : MonoBehaviour {
         {
             new ConcreteInteraction(_contents[Content.Delivery], cell =>
             {
-                var radius = cell.Owner == Controller.LocalPlayer ? Controller.Grid.OccupyRadius[cell.Pos] : 0;
+                var radius = Controller.Grid.OccupyRadius[cell.Pos];
                 var cost = (radius == 0 ? 9 : 6 * (radius + 1)) * ResourceHandler.VillageBeerCost;
                 if (_resources.Beer >= cost)
                 {

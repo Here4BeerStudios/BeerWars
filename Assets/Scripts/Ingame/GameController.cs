@@ -235,7 +235,7 @@ public class GameController : MonoBehaviour
 				if (cell.Owner != null)
 					HighscoreHandler.DecScore (cell.Owner);
 
-                // local player is new owner
+                // update resource as new owner
 	            if (player == LocalPlayer)
 	            {
 	                if (cell.Content == Content.Cornfield)
@@ -247,7 +247,7 @@ public class GameController : MonoBehaviour
 	                    PlayerResource.WaterFields += 1;
 	                }
 				}
-                // local player loses fields
+                // update resource as previous owner
                 else if (cell.Owner == LocalPlayer)
 			    {
 			        if (cell.Content == Content.Cornfield)
@@ -264,10 +264,14 @@ public class GameController : MonoBehaviour
 			        }
                 }
 
-                // destroy breweries
+                // update content
 			    if (cell.Content == Content.Brewery)
 			    {
 			        cell.Content = _contents[Content.Normal];
+			    }
+			    else if (cell.Content == Content.Village)
+			    {
+			        Grid.OccupyRadius[cell.Pos] = 0;
 			    }
 
 				cell.Owner = player;
