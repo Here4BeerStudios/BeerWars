@@ -35,7 +35,7 @@ public class Host
         var msg = netMsg.ReadMessage<AddPlayerMessage>();
 
         var playerId = (uint) _players.Count;
-        var newPlayer = new InitPlayer(playerId, msg.Name, msg.Emblem, Random.ColorHSV(0, 1, 0, 1, 0, 1), Vector2Int.zero);
+        var newPlayer = new InitPlayer(playerId, msg.Name, msg.Emblem, Random.ColorHSV(0, 1, 0, 1, 0.2f, 0.8f), Vector2Int.zero);
 
         _netIds.Add(netMsg.conn, playerId);
         _players.Add(newPlayer);
