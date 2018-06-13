@@ -253,4 +253,52 @@ public class GameController : MonoBehaviour
 
 		HighscoreHandler.IncScore (player, points);
     }
+
+    //private void OccupySurrounded()
+    //{
+    //    var visited = new List<Vector2Int>();
+
+    //    var dirs1 = new[]
+    //    {
+    //        new Vector2Int(1, 0),
+    //        new Vector2Int(1, 1),
+    //        new Vector2Int(0, 1),
+    //        new Vector2Int(-1, 1),
+    //        new Vector2Int(-1, 0),
+    //        new Vector2Int(0, -1),
+    //    };
+    //    var dirs2 = new[]
+    //    {
+    //        new Vector2Int(1, 0),
+    //        new Vector2Int(-1, 1),
+    //        new Vector2Int(0, 1),
+    //        new Vector2Int(1, 1),
+    //        new Vector2Int(-1, 0),
+    //        new Vector2Int(0, -1),
+    //    };
+    //    var x = 0;
+    //    var y = 0;
+    //    var r = new Vector2Int(x, y);
+    //    visited.Add(r);
+
+    //    do
+    //    {
+    //        var i = -1;
+    //        for (var d = 0; d < dirs1.Length; d++)
+    //        {
+    //            var rd = r + dirs1[d];
+    //            if (Grid[rd.x, rd.y].Owner == LocalPlayer)
+    //            {
+    //                i = d;
+    //                break;
+    //            }
+    //        }
+    //        if (i > 0)
+    //        {
+    //            r += dirs1[i];
+    //            visited.Add(r);
+    //        }
+    //    }
+    //    while (r.x != x && r.y != y);
+    //}
 }
