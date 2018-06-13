@@ -183,17 +183,6 @@ public class GameController : MonoBehaviour
     {
         var x = pos.x;
         var y = pos.y;
-        int x1, x2;
-        if ((y & 1) == 0)
-        {
-            x1 = x - 1;
-            x2 = x;
-        }
-        else
-        {
-            x1 = x;
-            x2 = x + 1;
-        }
 
         //update occupy radius
         if (Grid[x, y].Owner != player)

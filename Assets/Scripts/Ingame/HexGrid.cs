@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Ingame.Contents;
 using UnityEngine;
-using UnityEngine.XR.WSA.Persistence;
 
 public class HexGrid : MonoBehaviour
 {
@@ -62,6 +61,11 @@ public class HexGrid : MonoBehaviour
 
     private void CreateCell(int x, int y, CellContent content)
     {
+		if (_cells [y, x] != null) {
+			Destroy (_cells [y, x].gameObject);
+			Destroy (_cells [y, x]);
+			// Wrong game initialized.
+		}
         var position = new Vector3((x + y * 0.5f - y / 2) * (HexCell.InnerRadius * 2f),
             y * (HexCell.OuterRadius * 1.5f), 0f);
 
@@ -78,7 +82,7 @@ public class HexGrid : MonoBehaviour
 
         if (content == Content.Village)
         {
-            OccupyRadius.Add(pos, 0);
+			OccupyRadius[pos] = 0;
         }
     }
 }
