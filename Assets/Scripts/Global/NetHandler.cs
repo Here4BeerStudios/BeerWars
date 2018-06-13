@@ -63,7 +63,7 @@ public class NetHandler
         _netClient.Send(MsgType.AddPlayer, new AddPlayerMessage()
         {
             Name = LocalPlayerInfo.self.Name,
-			Emblem = LocalPlayerInfo.self.Emblem.name
+			Emblem = LocalPlayerInfo.self.Emblem != null ? LocalPlayerInfo.self.Emblem.name : null
         });
     }
 

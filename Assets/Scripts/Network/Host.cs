@@ -44,6 +44,7 @@ public class Host
     private void OnLoadScene(NetworkMessage netMsg)
     {
         NetworkServer.SendToAll(BwMsgTypes.InitScene, new EmptyMessage());
+        Debug.Log("Server: init scene sended to players");
     }
 
     private void OnLoadGrid(NetworkMessage netMsg)
@@ -73,6 +74,7 @@ public class Host
         }
 
         NetworkServer.SendToAll(BwMsgTypes.InitGrid, new InitGridMessage { Grid = data });
+        Debug.Log("Server grid sended to players");
     }
 
     private void OnLoadPlayers(NetworkMessage netMsg)
@@ -85,6 +87,7 @@ public class Host
                 OwnId = entry.Value,
                 Playerses = playerArray,
             });
+             Debug.Log("Server: Players sended to " + entry.Key.connectionId);
         }
     }
 
