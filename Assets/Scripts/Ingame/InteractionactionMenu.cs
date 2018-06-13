@@ -58,7 +58,7 @@ public class InteractionactionMenu : MonoBehaviour {
     private void InitInteractions()
     {
         //build actions
-        _interactions.Add(Content.Normal, new InteractionGroup(cell => cell.Owner.NetId == Controller.PlayerId, new []
+        _interactions.Add(Content.Normal, new InteractionGroup(cell =>  cell.Owner != null && cell.Owner.NetId == Controller.PlayerId, new []
         {
             new ConcreteInteraction(_contents[Content.Brewery], cell =>
             {
@@ -78,7 +78,6 @@ public class InteractionactionMenu : MonoBehaviour {
             {
                 var radius = cell.Owner == Controller.LocalPlayer ? Controller.Grid.OccupyRadius[cell.Pos] : 0;
                 var cost = (radius == 0 ? 9 : 6 * (radius + 1)) * ResourceHandler.VillageBeerCost;
-                Debug.Log("beer cost: " + cost);
                 if (_resources.Beer >= cost)
                 {
                     _resources.Beer -= cost;
