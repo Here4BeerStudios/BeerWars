@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour
             _netHandler.RegisterHandler(BwMsgTypes.InitGrid, OnInitGrid);
             _netHandler.RegisterHandler(BwMsgTypes.InitPlayers, OnInitPlayers);
             _netHandler.RegisterHandler(BwMsgTypes.Action, OnAction);
-            _netHandler.LoadGrid(50, 50);
+            _netHandler.LoadGrid(30, 30);
         }
         else
         {
