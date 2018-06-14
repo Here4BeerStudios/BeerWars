@@ -270,12 +270,13 @@ public class GameController : MonoBehaviour
 			    {
 			        cell.Content = _contents[Content.Normal];
 			    }
-			    else if (cell.Content == Content.Village && cell.Owner != player)
+			    else if (cell.Content == Content.Village && cell.Owner != null && cell.Owner != player)
 			    {
 			        Grid.OccupyRadius[cell.Pos] = 0;
 			    }
 
 				cell.Owner = player;
+
 				points++;
 			}
         }
