@@ -1,17 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
 guid: 5a5ecf235386fbe49833ea4b275c3e64
-timeCreated: 1528901821
-licenseType: Free
-TextureImporter:
-  fileIDToRecycleName: {}
-  externalObjects: {}
-  serializedVersion: 4
-  mipmaps:
-    mipMapMode: 0
-    enableMipMap: 1
-=======
-guid: 84fec674bb89b51468f8acd6abfc52cd
 TextureImporter:
   fileIDToRecycleName: {}
   externalObjects: {}
@@ -19,7 +7,6 @@ TextureImporter:
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
->>>>>>> 8270899db8a2bbe085e08c60041091d7fc107009
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -45,15 +32,6 @@ TextureImporter:
     filterMode: -1
     aniso: -1
     mipBias: -1
-<<<<<<< HEAD
-    wrapU: -1
-    wrapV: -1
-    wrapW: -1
-  nPOTScale: 1
-  lightmap: 0
-  compressionQuality: 50
-  spriteMode: 0
-=======
     wrapU: 1
     wrapV: 1
     wrapW: -1
@@ -61,20 +39,10 @@ TextureImporter:
   lightmap: 0
   compressionQuality: 50
   spriteMode: 1
->>>>>>> 8270899db8a2bbe085e08c60041091d7fc107009
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-<<<<<<< HEAD
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 100
-  alphaUsage: 1
-  alphaIsTransparency: 0
-  spriteTessellationDetail: -1
-  textureType: 0
-  textureShape: 1
-=======
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -84,14 +52,10 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
->>>>>>> 8270899db8a2bbe085e08c60041091d7fc107009
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
   platformSettings:
-<<<<<<< HEAD
-  - buildTarget: DefaultTexturePlatform
-=======
   - serializedVersion: 2
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
@@ -116,7 +80,6 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   - serializedVersion: 2
     buildTarget: WebGL
->>>>>>> 8270899db8a2bbe085e08c60041091d7fc107009
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -131,15 +94,12 @@ TextureImporter:
     sprites: []
     outline: []
     physicsShape: []
-<<<<<<< HEAD
-=======
     bones: []
     spriteID: 
     vertices: []
     indices: 
     edges: []
     weights: []
->>>>>>> 8270899db8a2bbe085e08c60041091d7fc107009
   spritePackingTag: 
   userData: 
   assetBundleName: 
