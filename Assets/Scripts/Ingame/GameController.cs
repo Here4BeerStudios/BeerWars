@@ -183,7 +183,7 @@ public class GameController : MonoBehaviour
     {
         var x = pos.x;
         var y = pos.y;
-
+       
         //update occupy radius
         if (Grid[x, y].Owner != player)
         {
@@ -232,6 +232,7 @@ public class GameController : MonoBehaviour
         foreach (var cell in cells)
         {
 			if (cell.Owner != player) {
+
 				if (cell.Owner != null)
 					HighscoreHandler.DecScore (cell.Owner);
 
@@ -269,7 +270,7 @@ public class GameController : MonoBehaviour
 			    {
 			        cell.Content = _contents[Content.Normal];
 			    }
-			    else if (cell.Content == Content.Village)
+			    else if (cell.Content == Content.Village && cell.Owner != player)
 			    {
 			        Grid.OccupyRadius[cell.Pos] = 0;
 			    }
