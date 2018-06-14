@@ -14,6 +14,8 @@ public class HighscoreHandler : MonoBehaviour {
 	public void InitPlayerScore(Player[] p) {
 		players = p;
 		points = new int[p.Length];
+		for (int i = 0; i < points.Length; i++)
+			points [i] = 7;
 		for (int i = p.Length; i < UIElements.Length; i++)
 			UIElements [i].SetActive (false);
 		
