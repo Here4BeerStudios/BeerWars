@@ -23,6 +23,11 @@ public class GameController : MonoBehaviour
         get { return _players[PlayerId]; }
     }
 
+    void Awake()
+    {
+        Application.runInBackground = true;
+    }
+
     void Start()
     {
         _contents = ContentHandler.Self;
